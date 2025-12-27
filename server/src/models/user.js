@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema({
 
   phone: {
       type: String,
-      required: true,
+      required: false,
     },
 
     password:{
@@ -45,6 +45,16 @@ const userSchema = new mongoose.Schema({
 
   },
 
+  resetPasswordToken: {
+    type: String,
+  },
+
+
+  resetPasswordExpire: {
+    type: Date,
+  },
+
+
   
   course: {
       type: String,
@@ -61,13 +71,7 @@ const userSchema = new mongoose.Schema({
     type :[String],
   },
 
-  createdBy:{
-    type: mongoose.Schema.Types.ObjectId,
-    required: [false , "User is required."],
-    
-    ref: "User",
-
-  },
+  
 
   address:{
     country:{
