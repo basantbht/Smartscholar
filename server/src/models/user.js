@@ -32,7 +32,7 @@ const userSchema = new mongoose.Schema({
     password:{
     type: String,
     required :[true,"password is required"],
-    minLength:[6,"password most be 6 character"],
+    minLength:[6,"password must be 6 character"],
   },
 
 
@@ -41,8 +41,6 @@ const userSchema = new mongoose.Schema({
     default:[STUDENT],
     enum:[STUDENT, COLLEGE],
     
-    
-
   },
 
   resetPasswordToken: {
@@ -81,7 +79,6 @@ const userSchema = new mongoose.Schema({
 
     city:{
       type: String,
-      required: [true,"user city is needed"],
 
     },
     
