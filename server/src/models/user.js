@@ -26,13 +26,12 @@ const userSchema = new mongoose.Schema({
 
   phone: {
       type: String,
-      required: true,
     },
 
     password:{
     type: String,
     required :[true,"password is required"],
-    minLength:[6,"password most be 6 character"],
+    minLength:[6,"password must be 6 character"],
   },
 
 
@@ -41,8 +40,6 @@ const userSchema = new mongoose.Schema({
     default:[STUDENT],
     enum:[STUDENT, COLLEGE],
     
-    
-
   },
 
   
@@ -61,14 +58,6 @@ const userSchema = new mongoose.Schema({
     type :[String],
   },
 
-  createdBy:{
-    type: mongoose.Schema.Types.ObjectId,
-    required: [false , "User is required."],
-    
-    ref: "User",
-
-  },
-
   address:{
     country:{
       type: String,
@@ -77,7 +66,6 @@ const userSchema = new mongoose.Schema({
 
     city:{
       type: String,
-      required: [true,"user city is needed"],
 
     },
     
