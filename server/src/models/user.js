@@ -26,6 +26,7 @@ const userSchema = new mongoose.Schema({
 
   phone: {
       type: String,
+      required: false,
     },
 
     password:{
@@ -42,6 +43,16 @@ const userSchema = new mongoose.Schema({
     
   },
 
+  resetPasswordToken: {
+    type: String,
+  },
+
+
+  resetPasswordExpire: {
+    type: Date,
+  },
+
+
   
   course: {
       type: String,
@@ -57,6 +68,8 @@ const userSchema = new mongoose.Schema({
   imageUrls:{
     type :[String],
   },
+
+  
 
   address:{
     country:{
