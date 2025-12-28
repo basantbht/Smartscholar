@@ -1,34 +1,49 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Route, Routes } from "react-router-dom"
+import Login from "./pages/Login"
+import Home from "./pages/Home"
+import Register from "./pages/Register"
+import Navbar from "./components/Navbar"
+import Universities from "./pages/Universities"
+import Colleges from "./pages/Colleges"
+import Courses from "./pages/Courses"
+import Degrees from "./pages/Degrees"
+import Admissions from "./pages/Admissions"
+import Scholarships from "./pages/Scholarships"
+import ChatBot from "./components/ChatBot"
+import Footer from "./components/Footer"
 
-function App() {
-  const [count, setCount] = useState(0)
-
+const App = () => {
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div className="mr-20 ml-20">
+
+      <Navbar />
+      <Routes>
+        <Route
+          path='/'
+          element={<Home />}
+        />
+
+        <Route
+          path='/register'
+          element={<Register />}
+        />
+
+        <Route
+          path='/login'
+          element={<Login />}
+        />
+
+        <Route path="/universities" element={<Universities />} />
+        <Route path="/colleges" element={<Colleges />} />
+        <Route path="/courses" element={<Courses />} />
+        <Route path="/degrees" element={<Degrees />} />
+        <Route path="/admissions" element={<Admissions />} />
+        <Route path="/scholarships" element={<Scholarships />} />
+
+      </Routes>
+      <ChatBot />
+      <Footer />
+    </div>
   )
 }
 
