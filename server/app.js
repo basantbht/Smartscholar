@@ -1,22 +1,25 @@
+import express from "express"
+import cookieParser from "cookie-parser"
+import cors from "cors"
+import dotenv from 'dotenv'
+import { dbConnection } from "./src/database/db.js"
+import userRouter from "./src/routes/user.route.js"
 
-import express from "express";
-import connectDB from "./src/config/database.js";
+const app = express();
 
+dotenv.config()
 
-import config from "./src/config/config.js";
-import authRouter from "./src/routes/authRoute.js";
-import bodyParser from "body-parser";
+app.use(cors({
+    origin: [process.env.FRONTEND_URL],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"]
+}))
+app.use(cookieParser())
+app.use(express.json())
+app.use(express.urlencoded({extended: true}))
 
- const app = express();
- connectDB();
+app.use("/api/v1/user", userRouter)
 
- app.use(express.json());
- app.use(express.urlencoded({ extended: true }));
+dbConnection()
 
- app.use("/api/auth",authRouter);
- 
-
-
- app.listen(config.port, ()=>{
-  console.log(`Server running at port ${config.port}`);
-});
+export default app
