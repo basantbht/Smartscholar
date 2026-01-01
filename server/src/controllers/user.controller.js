@@ -1,4 +1,3 @@
-import { sendMail } from "../Mail/mail.Send.js";
     import { User } from "../models/user.model.js";
     import { generateJWTToken } from "../utils/jwtToken.js"
     import bcrypt from "bcryptjs"
