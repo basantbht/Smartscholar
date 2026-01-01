@@ -1,5 +1,4 @@
 import { Route, Routes } from "react-router-dom"
-import Login from "./pages/User/Login"
 import Home from "./pages/User/Home"
 import Register from "./pages/User/Register"
 import Navbar from "./components/Navbar"
@@ -11,6 +10,7 @@ import Admissions from "./pages/User/Admissions"
 import Scholarships from "./pages/User/Scholarships"
 import ChatBot from "./components/ChatBot"
 import Footer from "./components/Footer"
+import Login from "./pages/User/Login"
 
 const App = () => {
   return (
