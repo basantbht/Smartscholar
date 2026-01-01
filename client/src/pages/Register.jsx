@@ -1,19 +1,15 @@
-import {
-  Eye,
-  EyeOff,
-  Loader2,
-  Lock,
-  Mail,
-  MessageSquare,
-  User,
-} from "lucide-react";
+import { Eye, EyeOff, Loader2, Lock, Mail, User } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Register = () => {
-  const isSigningUp = false;
+  const navigate = useNavigate();
+  const [isSigningUp, setIsSigningUp] = useState(false);
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -21,22 +17,44 @@ const Register = () => {
     confirmPassword: "",
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
-    // dispatch(signup(formData));
+    setIsSigningUp(true);
+
+    try {
+      const res = await axios.post(
+        "http://localhost:3000/api/v1/user/register",
+        formData
+      );
+
+      // Axios puts server response inside res.data
+      console.log(res.data);
+      alert(res.data.message || "Registered successfully!");
+
+      // Optional: redirect
+      navigate("/login");
+    } catch (error) {
+      console.log(error);
+
+      const msg =
+        error?.response?.data?.message || error.message || "Something went wrong";
+      console.log(msg);
+      alert(msg);
+    } finally {
+      setIsSigningUp(false);
+    }
   };
 
   return (
     <div className="mt-10 flex items-center justify-center px-4">
       <div className="bg-white shadow-xl rounded-2xl max-w-md w-full p-8">
-        {/* Logo & Heading */}
         <div className="flex flex-col items-center text-center mb-8">
           <h1 className="text-3xl font-bold text-blue-900">Create Account</h1>
-          <p className="text-gray-500 mt-2">Get started with your free account</p>
+          <p className="text-gray-500 mt-2">
+            Get started with your free account
+          </p>
         </div>
 
-        {/* Register Form */}
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Full Name */}
           <div>
@@ -101,7 +119,7 @@ const Register = () => {
               <button
                 type="button"
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
-                onClick={() => setShowPassword(!showPassword)}
+                onClick={() => setShowPassword((s) => !s)}
               >
                 {showPassword ? (
                   <EyeOff className="w-5 h-5" />
@@ -127,13 +145,16 @@ const Register = () => {
                 placeholder="*********"
                 value={formData.confirmPassword}
                 onChange={(e) =>
-                  setFormData({ ...formData, confirmPassword: e.target.value })
+                  setFormData({
+                    ...formData,
+                    confirmPassword: e.target.value,
+                  })
                 }
               />
               <button
                 type="button"
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                onClick={() => setShowConfirmPassword((s) => !s)}
               >
                 {showConfirmPassword ? (
                   <EyeOff className="w-5 h-5" />
@@ -144,11 +165,10 @@ const Register = () => {
             </div>
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
             disabled={isSigningUp}
-            className="w-full bg-blue-900 hover:bg-blue-800 text-white font-semibold py-2 rounded-lg flex justify-center items-center gap-2 transition"
+            className="w-full bg-blue-900 hover:bg-blue-800 text-white font-semibold py-2 rounded-lg flex justify-center items-center gap-2 transition disabled:opacity-60"
           >
             {isSigningUp ? (
               <>
@@ -160,11 +180,13 @@ const Register = () => {
           </button>
         </form>
 
-        {/* Footer */}
         <div className="mt-6 text-center">
           <p className="text-gray-500 text-sm">
             Already have an account?{" "}
-            <Link to="/login" className="text-blue-900 font-medium hover:underline">
+            <Link
+              to="/login"
+              className="text-blue-900 font-medium hover:underline"
+            >
               Login Here
             </Link>
           </p>
