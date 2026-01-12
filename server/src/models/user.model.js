@@ -5,14 +5,29 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    email:{
+
+    email: {
         type: String,
         required: true,
     },
-    password:{
+
+    password: {
         type: String,
         required: true,
-    }
-}, {timestamps: true})
+    },
+
+    role: {
+        type: String,
+        enum: ["STUDENT", "COLLEGE", "ADMIN"],
+        default: "STUDENT",
+    },
+
+    phone: { type: String },
+
+    isVerified: {type: Boolean, default: false},
+
+    isActive: { type: Boolean, default: true },
+
+}, { timestamps: true })
 
 export const User = mongoose.model("User", userSchema);

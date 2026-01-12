@@ -24,6 +24,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/Scholarship", scholarshipRouter);
 
-await dbConnection();
+await dbConnection()
 
 export default app;

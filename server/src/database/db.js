@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
 
-export const dbConnection = async() => {
-    await mongoose.connect(process.env.MONGO_URI, {
-        dbName: "smartscholar"
-    }).then(() => {
-        console.log("Database Connected")
-    }).catch((err) => {
-        console.log(`Error connecting to databae: ${err.message || err}`)
-    })
-}
+export const dbConnection = async () => {
+    try {
+        await mongoose.connect(process.env.MONGO_URI);
+        console.log("Database connected!");
+    } catch (error) {
+        console.error("Error connecting to database:", error.message);
+        process.exit(1);
+    }
+};
