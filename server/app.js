@@ -1,25 +1,29 @@
-import express from "express"
-import cookieParser from "cookie-parser"
-import cors from "cors"
-import dotenv from 'dotenv'
-import { dbConnection } from "./src/database/db.js"
-import userRouter from "./src/routes/user.route.js"
+import express from "express";
+import cookieParser from "cookie-parser";
+import cors from "cors";
+import dotenv from "dotenv";
+import { dbConnection } from "./src/database/db.js";
+import userRouter from "./src/routes/user.route.js";
+import scholarshipRouter from "./src/routes/scholarship.route.js";
 
 const app = express();
 
-dotenv.config()
+dotenv.config();
 
-app.use(cors({
+app.use(
+  cors({
     origin: [process.env.FRONTEND_URL],
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE"]
-}))
-app.use(cookieParser())
-app.use(express.json())
-app.use(express.urlencoded({extended: true}))
+    methods: ["GET", "POST", "PUT", "DELETE"],
+  })
+);
+app.use(cookieParser());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.use("/api/v1/user", userRouter)
+app.use("/api/v1/user", userRouter);
+app.use("/api/v1/Scholarship", scholarshipRouter);
 
-dbConnection()
+await dbConnection();
 
-export default app
+export default app;

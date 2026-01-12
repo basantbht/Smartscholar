@@ -1,4 +1,5 @@
-    import { User } from "../models/user.model.js";
+    import { sendMail } from "../Mail/mail.send.js";
+import { User } from "../models/user.model.js";
     import { generateJWTToken } from "../utils/jwtToken.js"
     import bcrypt from "bcryptjs"
     import { v2 as cloudinary } from "cloudinary"
