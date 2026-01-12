@@ -148,6 +148,3 @@ export const login = async (req, res) => {
 };
 
 
-const forgotPassword = () => {
-  
-}
