@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Logs
 logs
 *.log
@@ -24,3 +25,7 @@ dist-ssr
 *.sw?
 
 .env
+=======
+node_modules,
+.env
+>>>>>>> sagar

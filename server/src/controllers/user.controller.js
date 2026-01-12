@@ -3,6 +3,7 @@ import { generateJWTToken } from "../utils/jwtToken.js";
 import bcrypt from "bcryptjs";
 import { sendMail } from "../Mail/mail.send.js";
 
+
 export const register = async (req, res) => {
   try {
     const { fullName, email, password, confirmPassword, role, phone } = req.body;
