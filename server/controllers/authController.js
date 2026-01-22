@@ -1,73 +1,100 @@
 import { asyncHandler } from "../middlewares/asyncHandler.js";
 import ErrorHandler from "../middlewares/error.js";
 import { User } from "../models/user.js";
+import { sendVerificationEmail } from "../Mail/mail.send.js";
+import { createEmailVerifyToken, verifyEmailVerifyToken } from "../utils/emailToken.js";
 import { generateToken } from "../utils/generateToken.js";
 
-export const register = asyncHandler(async (req, res, next) => {
-  const { name, email, password, role } = req.body;
+const emailRegex = /^\S+@\S+\.\S+$/;
 
-  if (!name || !email || !password) {
-    return next(new ErrorHandler("Name, email, password are required", 400));
+export const register = asyncHandler(async (req, res, next) => {
+  const { name, email, password, confirmPassword, role } = req.body;
+
+  // ✅ validations (like your old project)
+  if (!name || !email || !password || !confirmPassword) {
+    return next(new ErrorHandler("All fields are required", 400));
   }
 
+  if (!emailRegex.test(email)) {
+    return next(new ErrorHandler("Invalid email format.", 400));
+  }
+
+  if (password !== confirmPassword) {
+    return next(new ErrorHandler("Password and Confirm password should be same.", 400));
+  }
+
+  // ✅ safe role
   const allowedRoles = ["Student", "College"];
   const safeRole = allowedRoles.includes(role) ? role : "Student";
 
   const exists = await User.findOne({ email });
   if (exists) {
-    return next(new ErrorHandler("User already exists", 400));
+    return next(new ErrorHandler("Email is already registered.", 400));
   }
 
+  // ✅ create user unverified
   const user = await User.create({
     name,
     email,
-    password,
+    password, // will hash in model pre-save
     role: safeRole,
+    isVerified: false,
+  });
+
+  // ✅ send verification email
+  const token = createEmailVerifyToken(user._id);
+  const verifyLink = `${process.env.BACKEND_URL}/api/v1/auth/verify-email?token=${token}`;
+
+  await sendVerificationEmail({
+    email: user.email,
+    name: user.name,
+    verifyLink,
   });
 
   res.status(201).json({
     success: true,
-    message: "Registered successfully. Please login.",
+    message: "Registered successfully. Please verify your email.",
     data: {
       user: {
         _id: user._id,
         name: user.name,
         email: user.email,
         role: user.role,
+        isVerified: user.isVerified,
       },
     },
   });
 });
 
-/**
- * LOGIN
- * ✅ Token generated here
- */
+
 export const login = asyncHandler(async (req, res, next) => {
   const { email, password, role } = req.body;
 
   if (!email || !password || !role) {
-    return next(
-      new ErrorHandler("Email, password, role are required", 400)
-    );
+    return next(new ErrorHandler("Email, password, role are required", 400));
+  }
+
+  if (!emailRegex.test(email)) {
+    return next(new ErrorHandler("Invalid email format.", 400));
   }
 
   const user = await User.findOne({ email }).select("+password");
-  if (!user) {
-    return next(new ErrorHandler("Invalid credentials", 401));
-  }
+  if (!user) return next(new ErrorHandler("Invalid credentials", 401));
 
   if (user.role !== role) {
     return next(new ErrorHandler("Role mismatch", 401));
   }
 
-  const isMatch = await user.comparePassword(password);
-  if (!isMatch) {
-    return next(new ErrorHandler("Invalid credentials", 401));
+  if (!user.isVerified) {
+    return next(new ErrorHandler("User not verified. Please check your email.", 403));
   }
+
+  const isMatch = await user.comparePassword(password);
+  if (!isMatch) return next(new ErrorHandler("Invalid credentials", 401));
 
   generateToken(user, 200, "Logged in successfully", res);
 });
+
 
 /**
  * LOGOUT
@@ -95,4 +122,35 @@ export const me = asyncHandler(async (req, res) => {
       user: req.user,
     },
   });
+});
+
+
+export const verifyEmail = asyncHandler(async (req, res, next) => {
+  const { token } = req.query;
+  if (!token) return next(new ErrorHandler("Missing token", 400));
+
+  let payload;
+  try {
+    payload = verifyEmailVerifyToken(token);
+  } catch (e) {
+    return res.redirect(`${process.env.FRONTEND_URL}/login?verified=false&reason=expired`);
+  }
+
+  if (payload?.type !== "email_verify" || !payload?.userId) {
+    return res.redirect(`${process.env.FRONTEND_URL}/login?verified=false&reason=invalid`);
+  }
+
+  const user = await User.findById(payload.userId);
+  if (!user) {
+    return res.redirect(`${process.env.FRONTEND_URL}/login?verified=false&reason=notfound`);
+  }
+
+  if (user.isVerified) {
+    return res.redirect(`${process.env.FRONTEND_URL}/login?verified=already`);
+  }
+
+  user.isVerified = true;
+  await user.save();
+
+  return res.redirect(`${process.env.FRONTEND_URL}/login?verified=true`);
 });

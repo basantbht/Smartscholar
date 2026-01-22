@@ -1,3 +1,4 @@
+
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -24,26 +25,27 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
-    password: { type: String, required: true, minlength: 1, select: false },
+    password: { type: String, required: true, minlength: 6, select: false },
     role: {
       type: String,
       enum: ["Student", "College", "Admin"],
       default: "Student",
     },
+    isVerified: { type: Boolean, default: false },
 
-    // Student extras (optional)
+    // Student profile (only for Students)
     studentProfile: {
       seeGpa: { type: Number, default: null },
       plusTwoGpa: { type: Number, default: null },
       interests: { type: [String], default: [] },
-      schoolType: { type: String, default: null }, // "public" | "private"
-      category: { type: String, default: null }, // e.g. "open", "reserved"
+      schoolType: { type: String, default: null },
+      category: { type: String, default: null },
     },
 
-    // College extras
-    collegeProfile: { type: collegeProfileSchema, default: {} },
+    // College profile (only for Colleges)
+    collegeProfile: { type: collegeProfileSchema, default: () => ({}) },
 
-    // Verification state for College accounts
+    // Verification status (only for Colleges)
     verificationStatus: {
       type: String,
       enum: ["notSubmitted", "pending", "approved", "rejected"],
@@ -58,8 +60,10 @@ const userSchema = new mongoose.Schema(
 
 userSchema.pre("save", async function () {
   if (!this.isModified("password")) return;
+
   this.password = await bcrypt.hash(this.password, 10);
 });
+
 
 userSchema.methods.comparePassword = async function (entered) {
   return bcrypt.compare(entered, this.password);

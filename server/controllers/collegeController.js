@@ -7,44 +7,55 @@ import { Application } from "../models/application.js";
 import { SessionBooking } from "../models/sessionBooking.js";
 import { notifyUser } from "../services/notificationServices.js";
 
+// Helper middleware
 const ensureApprovedCollege = (req, next) => {
   if (req.user.verificationStatus !== "approved") {
     return next(new ErrorHandler("College not approved yet", 403));
   }
 };
 
+// Update college profile
 export const updateCollegeProfile = asyncHandler(async (req, res, next) => {
-  const { collegeName, universityAffiliation, address, phone, website, description } =
-    req.body;
+  const { 
+    collegeName, 
+    universityAffiliation, 
+    address, 
+    phone, 
+    website, 
+    description 
+  } = req.body;
 
   const college = await User.findById(req.user._id);
   if (!college || college.role !== "College") {
     return next(new ErrorHandler("College not found", 404));
   }
 
-  college.collegeProfile = {
-    ...(college.collegeProfile || {}),
-    collegeName: collegeName ?? college.collegeProfile?.collegeName ?? null,
-    universityAffiliation:
-      universityAffiliation ?? college.collegeProfile?.universityAffiliation ?? null,
-    address: address ?? college.collegeProfile?.address ?? null,
-    phone: phone ?? college.collegeProfile?.phone ?? null,
-    website: website ?? college.collegeProfile?.website ?? null,
-    description: description ?? college.collegeProfile?.description ?? null,
-  };
+  // Update only provided fields
+  if (collegeName !== undefined) college.collegeProfile.collegeName = collegeName;
+  if (universityAffiliation !== undefined) 
+    college.collegeProfile.universityAffiliation = universityAffiliation;
+  if (address !== undefined) college.collegeProfile.address = address;
+  if (phone !== undefined) college.collegeProfile.phone = phone;
+  if (website !== undefined) college.collegeProfile.website = website;
+  if (description !== undefined) college.collegeProfile.description = description;
 
   await college.save();
 
-  res.status(200).json({ success: true, message: "Profile updated", data: { college } });
+  res.status(200).json({ 
+    success: true, 
+    message: "Profile updated", 
+    data: { college } 
+  });
 });
 
+// Submit verification documents
 export const submitVerificationDocs = asyncHandler(async (req, res, next) => {
-  // expects upload.array("docs", 10) and body docTypes comma separated or repeated
   const files = req.files || [];
-  if (!files.length) return next(new ErrorHandler("No documents uploaded", 400));
+  if (!files.length) {
+    return next(new ErrorHandler("No documents uploaded", 400));
+  }
 
   const docTypesRaw = req.body.docTypes;
-  // allow: "PAN,AffiliationLetter" OR array
   const docTypes = Array.isArray(docTypesRaw)
     ? docTypesRaw
     : typeof docTypesRaw === "string"
@@ -73,7 +84,6 @@ export const submitVerificationDocs = asyncHandler(async (req, res, next) => {
       status: "pending",
     });
   } else {
-    // resubmission overwrites old docs (simpler)
     item.docs = docs;
     item.status = "pending";
     item.adminFeedback = null;
@@ -85,14 +95,14 @@ export const submitVerificationDocs = asyncHandler(async (req, res, next) => {
   college.verificationStatus = "pending";
   await college.save();
 
-  // notify admin(s) - simplest: notify all Admin users
+  // Notify admins
   const admins = await User.find({ role: "Admin" }).select("_id").lean();
   await Promise.all(
     admins.map((a) =>
       notifyUser({
         userId: a._id,
         title: "College Verification Pending",
-        message: `A college (${college.name}) submitted verification documents.`,
+        message: `${college.name} submitted verification documents.`,
         type: "verification",
         priority: "medium",
         link: `/admin/colleges/${college._id}`,
@@ -107,8 +117,12 @@ export const submitVerificationDocs = asyncHandler(async (req, res, next) => {
   });
 });
 
+// Get verification status
 export const getMyVerificationStatus = asyncHandler(async (req, res) => {
-  const item = await CollegeVerification.findOne({ college: req.user._id }).lean();
+  const item = await CollegeVerification.findOne({ 
+    college: req.user._id 
+  }).lean();
+  
   res.status(200).json({
     success: true,
     data: {
@@ -118,14 +132,27 @@ export const getMyVerificationStatus = asyncHandler(async (req, res) => {
   });
 });
 
+// Create post
 export const createPost = asyncHandler(async (req, res, next) => {
   ensureApprovedCollege(req, next);
 
-  const { postType, title, description, startDate, endDate, deadline, location, eligibility, requiredDocs, status } =
-    req.body;
+  const {
+    postType,
+    title,
+    description,
+    startDate,
+    endDate,
+    deadline,
+    location,
+    eligibility,
+    requiredDocs,
+    status,
+  } = req.body;
 
   if (!postType || !title || !description) {
-    return next(new ErrorHandler("postType, title, description are required", 400));
+    return next(
+      new ErrorHandler("postType, title, description are required", 400)
+    );
   }
 
   const post = await Post.create({
@@ -142,9 +169,14 @@ export const createPost = asyncHandler(async (req, res, next) => {
     status: status || "published",
   });
 
-  res.status(201).json({ success: true, message: "Post created", data: { post } });
+  res.status(201).json({ 
+    success: true, 
+    message: "Post created", 
+    data: { post } 
+  });
 });
 
+// Get college's posts
 export const getMyPosts = asyncHandler(async (req, res) => {
   const posts = await Post.find({ createdByCollege: req.user._id })
     .sort({ createdAt: -1 })
@@ -153,6 +185,7 @@ export const getMyPosts = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true, data: { posts } });
 });
 
+// Get applications
 export const getMyApplications = asyncHandler(async (req, res, next) => {
   ensureApprovedCollege(req, next);
 
@@ -164,11 +197,12 @@ export const getMyApplications = asyncHandler(async (req, res, next) => {
   res.status(200).json({ success: true, data: { applications: apps } });
 });
 
+// Review application
 export const reviewApplication = asyncHandler(async (req, res, next) => {
   ensureApprovedCollege(req, next);
 
   const { applicationId } = req.params;
-  const { action, collegeFeedback } = req.body; // accept | reject | needsFix
+  const { action, collegeFeedback } = req.body;
 
   if (!["accept", "reject", "needsFix"].includes(action)) {
     return next(new ErrorHandler("Invalid action", 400));
@@ -179,16 +213,17 @@ export const reviewApplication = asyncHandler(async (req, res, next) => {
     .populate("post", "title postType");
 
   if (!app) return next(new ErrorHandler("Application not found", 404));
+  
   if (app.college.toString() !== req.user._id.toString()) {
     return next(new ErrorHandler("Not authorized", 403));
   }
 
-  if (action === "accept") app.status = "accepted";
-  if (action === "reject") app.status = "rejected";
-  if (action === "needsFix") app.status = "needsFix";
-
+  app.status = action === "accept" ? "accepted" 
+    : action === "reject" ? "rejected" 
+    : "needsFix";
   app.collegeFeedback = collegeFeedback || null;
   app.reviewedAt = new Date();
+  
   await app.save();
 
   await notifyUser({
@@ -203,9 +238,14 @@ export const reviewApplication = asyncHandler(async (req, res, next) => {
     link: "/student/applications",
   });
 
-  res.status(200).json({ success: true, message: "Application reviewed", data: { app } });
+  res.status(200).json({ 
+    success: true, 
+    message: "Application reviewed", 
+    data: { app } 
+  });
 });
 
+// Get session requests
 export const getSessionRequests = asyncHandler(async (req, res, next) => {
   ensureApprovedCollege(req, next);
 
@@ -216,6 +256,7 @@ export const getSessionRequests = asyncHandler(async (req, res, next) => {
   res.status(200).json({ success: true, data: { sessions } });
 });
 
+// Update session request
 export const updateSessionRequest = asyncHandler(async (req, res, next) => {
   ensureApprovedCollege(req, next);
 
@@ -228,14 +269,16 @@ export const updateSessionRequest = asyncHandler(async (req, res, next) => {
 
   const session = await SessionBooking.findById(sessionId);
   if (!session) return next(new ErrorHandler("Session not found", 404));
+  
   if (session.college.toString() !== req.user._id.toString()) {
     return next(new ErrorHandler("Not authorized", 403));
   }
 
   session.status = status;
-  session.scheduledAt = scheduledAt ? new Date(scheduledAt) : session.scheduledAt;
-  session.meetingLink = meetingLink ?? session.meetingLink;
-  session.collegeReply = collegeReply ?? session.collegeReply;
+  if (scheduledAt) session.scheduledAt = new Date(scheduledAt);
+  if (meetingLink !== undefined) session.meetingLink = meetingLink;
+  if (collegeReply !== undefined) session.collegeReply = collegeReply;
+  
   await session.save();
 
   await notifyUser({
@@ -250,5 +293,9 @@ export const updateSessionRequest = asyncHandler(async (req, res, next) => {
     link: "/student/sessions",
   });
 
-  res.status(200).json({ success: true, message: "Session updated", data: { session } });
+  res.status(200).json({ 
+    success: true, 
+    message: "Session updated", 
+    data: { session } 
+  });
 });
