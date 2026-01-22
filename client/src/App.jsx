@@ -1,4 +1,6 @@
 import { Route, Routes, useLocation } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import ChatBot from "./components/ChatBot";
 import Footer from "./components/Footer";
@@ -11,8 +13,9 @@ import Degrees from "./pages/Student/Degrees";
 import Admissions from "./pages/Student/Admissions";
 import Scholarships from "./pages/Student/Scholarships";
 
-import Login from "./pages/Auth/Login";
-import Register from "./pages/Auth/Register";
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
+import Verified from "./pages/auth/Verified";
 
 import RoleRedirect from "./components/RoleRedirect";
 import RoleGuard from "./components/RoleGuard";
@@ -41,19 +44,31 @@ import AdminSettings from "./pages/admin/AdminSettings";
 const App = () => {
   const location = useLocation();
 
-  // ✅ hide footer on admin login page
   const hideFooterRoutes = ["/admin/login"];
   const hideFooter = hideFooterRoutes.includes(location.pathname);
 
   return (
     <>
+      <ToastContainer
+        position="top-right"
+        autoClose={2500}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        draggable
+        theme="light"
+        style={{ zIndex: 999999 }}
+      />
+
       <Routes>
-        {/* AUTH (WITH NAVBAR) */}
+        {/* AUTH */}
         <Route element={<AuthLayout />}>
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/verified" element={<Verified />} />
         </Route>
 
+        {/* ✅ role decides dashboard */}
         <Route path="/redirect" element={<RoleRedirect />} />
 
         {/* PUBLIC STUDENT SITE */}
@@ -74,21 +89,18 @@ const App = () => {
           </Route>
         </Route>
 
-        {/* COLLEGE */}
+        {/* COLLEGE DASHBOARD */}
         <Route element={<RoleGuard allowedRoles={["College"]} />}>
           <Route element={<CollegeLayout />}>
             <Route path="/college" element={<CollegeDashboard />} />
             <Route path="/college/verification" element={<CollegeVerification />} />
             <Route path="/college/posts" element={<CollegePosts />} />
-            <Route
-              path="/college/applications"
-              element={<CollegeApplications />}
-            />
+            <Route path="/college/applications" element={<CollegeApplications />} />
             <Route path="/college/sessions" element={<CollegeSessions />} />
           </Route>
         </Route>
 
-        {/* ADMIN */}
+        {/* ADMIN DASHBOARD */}
         <Route element={<RoleGuard allowedRoles={["Admin"]} />}>
           <Route element={<AdminLayout />}>
             <Route path="/admin" element={<AdminDashboard />} />
@@ -107,7 +119,6 @@ const App = () => {
         <Route path="/admin/login" element={<AdminLogin />} />
       </Routes>
 
-      {/* global widgets */}
       <ChatBot />
       {!hideFooter && <Footer />}
     </>

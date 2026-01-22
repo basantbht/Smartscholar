@@ -1,173 +1,169 @@
 import { useEffect, useState } from "react";
-import { api } from "../../utils/api";
-import { UploadCloud, Loader2, AlertCircle } from "lucide-react";
+import { useCollege } from "../../context/CollegeContext";
 import { useAuth } from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
 
-const docPresets = [
-  "AffiliationLetter",
-  "PAN",
-  "RegistrationCertificate",
-  "TaxClearance",
-  "CollegeBrochure",
+const DOCUMENT_TYPES = [
+  { value: "PAN", label: "PAN Card" },
+  { value: "RegistrationCertificate", label: "Registration Certificate" },
+  { value: "AffiliationLetter", label: "Affiliation Letter" },
+  { value: "TaxDocument", label: "Tax Document" },
+  { value: "AddressProof", label: "Address Proof" },
+  { value: "AuthorityLetter", label: "Authority Letter" },
+  { value: "TrustDeed", label: "Trust Deed" },
 ];
 
-const CollegeVerification = () => {
-  const { user, refresh } = useAuth();
-  const navigate = useNavigate();
-
-  const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
-
-  const [verification, setVerification] = useState(null);
-  const [docTypes, setDocTypes] = useState(["AffiliationLetter"]);
+const Verification = () => {
+  const { verification, fetchVerification, submitVerification, loading } = useCollege();
+  const { user } = useAuth();
   const [files, setFiles] = useState([]);
-
-  const fetchStatus = async () => {
-    setLoading(true);
-    try {
-      const res = await api.get("/college/verification");
-      setVerification(res.data?.data?.item || null);
-    } catch (e) {
-      console.log(e);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [docTypes, setDocTypes] = useState([]);
 
   useEffect(() => {
-    fetchStatus();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    fetchVerification();
   }, []);
 
-  useEffect(() => {
-    // if already approved, go dashboard
-    if (user?.verificationStatus === "approved") navigate("/college");
-  }, [user, navigate]);
-
-  const onFileChange = (e) => {
-    const selected = Array.from(e.target.files || []);
-    setFiles(selected);
+  const handleFileChange = (e) => {
+    const selectedFiles = Array.from(e.target.files);
+    setFiles(selectedFiles);
+    setDocTypes(new Array(selectedFiles.length).fill(""));
   };
 
-  const handleSubmit = async () => {
-    if (!files.length) return alert("Please select documents first.");
+  const handleDocTypeChange = (index, value) => {
+    const newDocTypes = [...docTypes];
+    newDocTypes[index] = value;
+    setDocTypes(newDocTypes);
+  };
 
-    setSubmitting(true);
-    try {
-      const form = new FormData();
-      files.forEach((f) => form.append("docs", f));
-      // docTypes can be comma-separated OR array; your backend supports both
-      form.append("docTypes", docTypes.join(","));
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-      await api.post("/college/verification/submit", form, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-
-      alert("Submitted successfully. Admin will review.");
-      await refresh();
-      await fetchStatus();
-    } catch (error) {
-      const msg = error?.response?.data?.message || error.message || "Submit failed";
-      alert(msg);
-    } finally {
-      setSubmitting(false);
+    if (files.length === 0) {
+      alert("Please select at least one document");
+      return;
     }
-  };
 
-  if (loading) return <div className="p-10 text-center text-gray-500">Loading...</div>;
+    if (docTypes.some((type) => !type)) {
+      alert("Please select a document type for all files");
+      return;
+    }
+
+    const formData = new FormData();
+    files.forEach((file) => {
+      formData.append("docs", file);
+    });
+    formData.append("docTypes", docTypes.join(","));
+
+    await submitVerification(formData);
+    setFiles([]);
+    setDocTypes([]);
+  };
 
   return (
-    <div className="mt-10 flex justify-center">
-      <div className="bg-white shadow-xl rounded-2xl max-w-3xl w-full p-8">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-blue-900">College Verification</h1>
-          <p className="text-gray-500 mt-1">
-            Submit documents for admin approval. Status:{" "}
-            <span className="font-semibold text-gray-800">{user?.verificationStatus}</span>
-          </p>
+    <div className="max-w-4xl mx-auto">
+      <div className="bg-white shadow rounded-2xl p-8">
+        <h1 className="text-2xl font-bold text-blue-900">Verification Status</h1>
+
+        <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">Current Status</p>
+              <p className="text-xl font-semibold text-blue-900 capitalize">
+                {user?.verificationStatus}
+              </p>
+            </div>
+          </div>
+
+          {verification?.item?.adminFeedback && (
+            <div className="mt-4 p-3 bg-white rounded border border-gray-200">
+              <p className="text-sm font-semibold text-gray-700">Admin Feedback:</p>
+              <p className="text-gray-600 mt-1">{verification.item.adminFeedback}</p>
+            </div>
+          )}
         </div>
 
-        {verification?.adminFeedback && (
-          <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 flex gap-3">
-            <AlertCircle className="text-red-600 mt-0.5" />
-            <div>
-              <p className="font-semibold text-red-700">Admin Feedback</p>
-              <p className="text-red-700 text-sm">{verification.adminFeedback}</p>
+        {verification?.item?.docs && verification.item.docs.length > 0 && (
+          <div className="mt-6">
+            <h3 className="font-semibold text-gray-900 mb-3">Submitted Documents</h3>
+            <div className="space-y-2">
+              {verification.item.docs.map((doc, idx) => (
+                <div key={idx} className="p-3 bg-gray-50 rounded-lg flex justify-between">
+                  <div>
+                    <p className="font-medium text-gray-900">{doc.docType}</p>
+                    <p className="text-sm text-gray-600">{doc.originalName}</p>
+                  </div>
+                  <a
+                    href={doc.fileUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:underline text-sm"
+                  >
+                    View
+                  </a>
+                </div>
+              ))}
             </div>
           </div>
         )}
 
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="border border-gray-200 rounded-xl p-4 bg-gray-50">
-            <p className="font-semibold text-gray-800 mb-2">Document Types</p>
-            <p className="text-xs text-gray-500 mb-3">
-              Select types (you can submit multiple). Order should match files if you want exact mapping.
-            </p>
+        <form onSubmit={handleSubmit} className="mt-8">
+          <h3 className="font-semibold text-gray-900 mb-4">
+            {verification?.item ? "Resubmit Documents" : "Submit Verification Documents"}
+          </h3>
 
-            <div className="flex flex-wrap gap-2">
-              {docPresets.map((d) => {
-                const active = docTypes.includes(d);
-                return (
-                  <button
-                    type="button"
-                    key={d}
-                    onClick={() =>
-                      setDocTypes((prev) =>
-                        active ? prev.filter((x) => x !== d) : [...prev, d]
-                      )
-                    }
-                    className={`px-3 py-2 rounded-lg border text-sm transition ${
-                      active
-                        ? "bg-blue-900 text-white border-blue-900"
-                        : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
-                    }`}
-                  >
-                    {d}
-                  </button>
-                );
-              })}
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Upload Documents (Max 10)
+              </label>
+              <input
+                type="file"
+                multiple
+                accept=".pdf,.jpg,.jpeg,.png"
+                onChange={handleFileChange}
+                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+              />
             </div>
-          </div>
 
-          <div className="border border-gray-200 rounded-xl p-4 bg-gray-50">
-            <p className="font-semibold text-gray-800 mb-2">Upload Documents</p>
-
-            <label className="flex items-center justify-center gap-2 border-2 border-dashed border-gray-300 rounded-xl p-6 cursor-pointer hover:bg-white transition">
-              <UploadCloud className="text-gray-500" />
-              <span className="text-gray-600 text-sm">Choose files (PDF/Image)</span>
-              <input type="file" multiple className="hidden" onChange={onFileChange} />
-            </label>
-
-            {files.length > 0 && (
-              <div className="mt-4">
-                <p className="text-sm font-medium text-gray-700 mb-2">Selected:</p>
-                <ul className="text-sm text-gray-600 list-disc ml-5 space-y-1">
-                  {files.map((f) => (
-                    <li key={f.name}>{f.name}</li>
+            {files.map((file, idx) => (
+              <div key={idx} className="p-4 bg-gray-50 rounded-lg">
+                <p className="text-sm font-medium text-gray-700 mb-2">{file.name}</p>
+                <select
+                  value={docTypes[idx] || ""}
+                  onChange={(e) => handleDocTypeChange(idx, e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                >
+                  <option value="">Select Document Type</option>
+                  {DOCUMENT_TYPES.map((type) => (
+                    <option key={type.value} value={type.value}>
+                      {type.label}
+                    </option>
                   ))}
-                </ul>
+                </select>
               </div>
-            )}
+            ))}
           </div>
-        </div>
 
-        <button
-          onClick={handleSubmit}
-          disabled={submitting}
-          className="mt-6 w-full bg-blue-900 hover:bg-blue-800 text-white font-semibold py-2 rounded-lg flex justify-center items-center gap-2 transition disabled:opacity-60"
-        >
-          {submitting ? (
-            <>
-              <Loader2 className="w-5 h-5 animate-spin" /> Submitting...
-            </>
-          ) : (
-            "Submit for Review"
-          )}
-        </button>
+          <button
+            type="submit"
+            disabled={loading || files.length === 0}
+            className="mt-6 w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition"
+          >
+            {loading ? "Submitting..." : "Submit Documents"}
+          </button>
+        </form>
+
+        <div className="mt-8 p-4 bg-yellow-50 rounded-lg">
+          <p className="text-sm font-semibold text-yellow-800 mb-2">Required Documents:</p>
+          <ul className="text-sm text-yellow-700 space-y-1">
+            {DOCUMENT_TYPES.map((type) => (
+              <li key={type.value}>• {type.label}</li>
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
   );
 };
 
-export default CollegeVerification;
+export default Verification;

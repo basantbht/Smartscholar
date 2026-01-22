@@ -1,9 +1,18 @@
-export const setAuthUser = (user) =>
-  localStorage.setItem("authUser", JSON.stringify(user));
+const KEY = "authUser";
 
-export const getAuthUser = () => {
-  const raw = localStorage.getItem("authUser");
-  return raw ? JSON.parse(raw) : null;
+export const setAuthUser = (user) => {
+  localStorage.setItem(KEY, JSON.stringify(user));
 };
 
-export const clearAuthUser = () => localStorage.removeItem("authUser");
+export const getAuthUser = () => {
+  const raw = localStorage.getItem(KEY);
+  try {
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+};
+
+export const clearAuthUser = () => {
+  localStorage.removeItem(KEY);
+};

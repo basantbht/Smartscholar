@@ -6,9 +6,8 @@ import { toast } from "react-toastify";
 
 const Register = () => {
   const navigate = useNavigate();
-  const { register } = useAuth();
+  const { register, registerLoading } = useAuth();
 
-  const [isSigningUp, setIsSigningUp] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -23,37 +22,22 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.name || !formData.email || !formData.password) {
-      return toast.error("Please fill all required fields");
-    }
-    if (formData.password !== formData.confirmPassword) {
-      return toast.error("Passwords do not match");
-    }
-
-    setIsSigningUp(true);
     try {
       await register({
         name: formData.name,
         email: formData.email,
         password: formData.password,
+        confirmPassword: formData.confirmPassword,
         role: formData.role,
       });
 
-      toast.success("Registration successful. Please login.");
-
-      // ✅ since no token on signup, go to login
+      // go to login after signup
       if (formData.role === "College") {
         navigate("/login", { replace: true, state: { role: "College" } });
       } else {
         navigate("/login", { replace: true });
       }
-    } catch (error) {
-      const msg =
-        error?.response?.data?.message || error.message || "Registration failed";
-      toast.error(msg);
-    } finally {
-      setIsSigningUp(false);
-    }
+    } catch {}
   };
 
   return (
@@ -77,24 +61,16 @@ const Register = () => {
               <input
                 type="text"
                 className="w-full border border-gray-300 rounded-lg py-2 pl-10 pr-3 focus:outline-none focus:ring-2 focus:ring-blue-600 transition"
-                placeholder={
-                  formData.role === "College"
-                    ? "College Admin Name"
-                    : "Basant Bhatt"
-                }
+                placeholder={formData.role === "College" ? "College Admin Name" : "Basant Bhatt"}
                 value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               />
             </div>
           </div>
 
           {/* Email */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Email
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
                 <Mail className="w-5 h-5" />
@@ -104,18 +80,14 @@ const Register = () => {
                 className="w-full border border-gray-300 rounded-lg py-2 pl-10 pr-3 focus:outline-none focus:ring-2 focus:ring-blue-600 transition"
                 placeholder="you@gmail.com"
                 value={formData.email}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               />
             </div>
           </div>
 
           {/* Password */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Password
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
                 <Lock className="w-5 h-5" />
@@ -125,29 +97,21 @@ const Register = () => {
                 className="w-full border border-gray-300 rounded-lg py-2 pl-10 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-600 transition"
                 placeholder="*********"
                 value={formData.password}
-                onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
-                }
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               />
               <button
                 type="button"
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
                 onClick={() => setShowPassword((s) => !s)}
               >
-                {showPassword ? (
-                  <EyeOff className="w-5 h-5" />
-                ) : (
-                  <Eye className="w-5 h-5" />
-                )}
+                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
               </button>
             </div>
           </div>
 
           {/* Confirm Password */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Confirm Password
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
                 <Lock className="w-5 h-5" />
@@ -177,10 +141,10 @@ const Register = () => {
 
           <button
             type="submit"
-            disabled={isSigningUp}
+            disabled={registerLoading}
             className="w-full bg-blue-900 hover:bg-blue-800 text-white font-semibold py-2 rounded-lg flex justify-center items-center gap-2 transition disabled:opacity-60"
           >
-            {isSigningUp ? (
+            {registerLoading ? (
               <>
                 <Loader2 className="w-5 h-5 animate-spin" /> Loading ...
               </>
