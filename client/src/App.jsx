@@ -27,11 +27,12 @@ import AuthLayout from "./layouts/AuthLayout";
 
 import StudentDashboard from "./pages/Student/Dashboard";
 
-import CollegeDashboard from "./pages/College/Dashboard";
-import CollegeVerification from "./pages/College/Verification";
-import CollegePosts from "./pages/College/Posts";
-import CollegeApplications from "./pages/College/Applications";
-import CollegeSessions from "./pages/College/Sessions";
+import CollegeDashboard from "./pages/college/Dashboard";
+import CollegeVerification from "./pages/college/Verification";
+import CollegePosts from "./pages/college/Posts";
+import CollegeApplications from "./pages/college/Applications";
+import CollegeSessions from "./pages/college/Sessions";
+import CollegeProfile from "./pages/college/Profile";
 
 import AdminDashboard from "./pages/Admin/Dashboard";
 import AdminCollegeVerifications from "./pages/Admin/CollegeVerifications";
@@ -40,12 +41,16 @@ import AdminLogin from "./pages/admin/AdminLogin";
 import AdminNotifications from "./pages/admin/AdminNotifications";
 import CollegesList from "./pages/admin/CollegesList";
 import AdminSettings from "./pages/admin/AdminSettings";
+import CollegeCourses from "./pages/college/CollegeCourses";
+import CollegeEvents from "./pages/college/CollegeEvents";
 
 const App = () => {
   const location = useLocation();
 
-  const hideFooterRoutes = ["/admin/login"];
-  const hideFooter = hideFooterRoutes.includes(location.pathname);
+  const hideFooter = location.pathname.startsWith("/admin");
+  
+  // const hideFooterRoutes = ["/admin/login", "/admin/*"];
+  // const hideFooter = hideFooterRoutes.includes(location.pathname);
 
   return (
     <>
@@ -94,9 +99,12 @@ const App = () => {
           <Route element={<CollegeLayout />}>
             <Route path="/college" element={<CollegeDashboard />} />
             <Route path="/college/verification" element={<CollegeVerification />} />
-            <Route path="/college/posts" element={<CollegePosts />} />
+            <Route path="/college/courses" element={<CollegeCourses />} />
+            <Route path="/college/scholarships" element={<Scholarships />} />
+            <Route path="/college/events" element={<CollegeEvents />} />
             <Route path="/college/applications" element={<CollegeApplications />} />
             <Route path="/college/sessions" element={<CollegeSessions />} />
+            <Route path="/college/profile" element={<CollegeProfile />} />
           </Route>
         </Route>
 

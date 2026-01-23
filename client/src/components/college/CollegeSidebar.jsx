@@ -16,14 +16,12 @@ import { useAuth } from "../../context/AuthContext";
 const items = [
   { label: "Dashboard", icon: LayoutDashboard, to: "/college" },
   { label: "Verification", icon: FileCheck2, to: "/college/verification" },
-  { label: "Posts", icon: Megaphone, to: "/college/posts" },
+  { label: "Courses", icon: FileCheck2, to: "/college/courses" },
+  { label: "Scholarships", icon: Megaphone, to: "/college/scholarships" },
+  { label: "Events", icon: Megaphone, to: "/college/events" },  
   { label: "Applications", icon: ClipboardList, to: "/college/applications" },
   { label: "Sessions", icon: MessageCircle, to: "/college/sessions" },
 
-  // future pages (you can create later)
-  { label: "Events", icon: CalendarDays, to: "/college/posts?tab=events" },
-  { label: "Courses", icon: GraduationCap, to: "/college/posts?tab=courses" },
-  { label: "Scholarships", icon: Award, to: "/college/posts?tab=scholarships" },
 ];
 
 const CollegeSidebar = ({ open, onClose }) => {

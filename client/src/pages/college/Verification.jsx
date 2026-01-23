@@ -15,47 +15,73 @@ const DOCUMENT_TYPES = [
 const Verification = () => {
   const { verification, fetchVerification, submitVerification, loading } = useCollege();
   const { user } = useAuth();
-  const [files, setFiles] = useState([]);
-  const [docTypes, setDocTypes] = useState([]);
+  const [files, setFiles] = useState({});
 
   useEffect(() => {
     fetchVerification();
   }, []);
 
-  const handleFileChange = (e) => {
-    const selectedFiles = Array.from(e.target.files);
-    setFiles(selectedFiles);
-    setDocTypes(new Array(selectedFiles.length).fill(""));
+  const handleFileChange = (docType, e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      setFiles((prev) => ({
+        ...prev,
+        [docType]: selectedFile,
+      }));
+    }
   };
 
-  const handleDocTypeChange = (index, value) => {
-    const newDocTypes = [...docTypes];
-    newDocTypes[index] = value;
-    setDocTypes(newDocTypes);
+  const handleRemoveFile = (docType) => {
+    setFiles((prev) => {
+      const newFiles = { ...prev };
+      delete newFiles[docType];
+      return newFiles;
+    });
+    // Reset the file input
+    const fileInput = document.getElementById(`file-${docType}`);
+    if (fileInput) {
+      fileInput.value = "";
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (files.length === 0) {
-      alert("Please select at least one document");
+    const fileEntries = Object.entries(files);
+    if (fileEntries.length === 0) {
+      alert("Please upload at least one document");
       return;
     }
 
-    if (docTypes.some((type) => !type)) {
-      alert("Please select a document type for all files");
-      return;
+    // Check if all required documents are uploaded
+    const uploadedDocTypes = new Set(fileEntries.map(([docType]) => docType));
+    const missingDocs = DOCUMENT_TYPES.filter(
+      (doc) => !uploadedDocTypes.has(doc.value)
+    );
+
+    if (missingDocs.length > 0) {
+      const missingNames = missingDocs.map((doc) => doc.label).join(", ");
+      if (
+        !confirm(
+          `You haven't uploaded: ${missingNames}. Do you want to submit anyway?`
+        )
+      ) {
+        return;
+      }
     }
 
     const formData = new FormData();
-    files.forEach((file) => {
+    const docTypes = [];
+
+    fileEntries.forEach(([docType, file]) => {
       formData.append("docs", file);
+      docTypes.push(docType);
     });
+
     formData.append("docTypes", docTypes.join(","));
 
     await submitVerification(formData);
-    setFiles([]);
-    setDocTypes([]);
+    setFiles({});
   };
 
   return (
@@ -85,22 +111,28 @@ const Verification = () => {
           <div className="mt-6">
             <h3 className="font-semibold text-gray-900 mb-3">Submitted Documents</h3>
             <div className="space-y-2">
-              {verification.item.docs.map((doc, idx) => (
-                <div key={idx} className="p-3 bg-gray-50 rounded-lg flex justify-between">
-                  <div>
-                    <p className="font-medium text-gray-900">{doc.docType}</p>
-                    <p className="text-sm text-gray-600">{doc.originalName}</p>
+              {verification.item.docs.map((doc, idx) => {
+                const isPdf = doc.fileUrl?.toLowerCase().includes('.pdf') || 
+                              doc.originalName?.toLowerCase().endsWith('.pdf');
+                return (
+                  <div key={idx} className="p-3 bg-gray-50 rounded-lg flex justify-between items-center">
+                    <div className="flex-1">
+                      <p className="font-medium text-gray-900">{doc.docType}</p>
+                      <p className="text-sm text-gray-600">{doc.originalName}</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <a
+                        href={doc.fileUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:underline text-sm font-medium px-3 py-1.5 bg-blue-50 rounded-lg hover:bg-blue-100 transition"
+                      >
+                        {isPdf ? "View PDF" : "View"}
+                      </a>
+                    </div>
                   </div>
-                  <a
-                    href={doc.fileUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline text-sm"
-                  >
-                    View
-                  </a>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}
@@ -111,42 +143,60 @@ const Verification = () => {
           </h3>
 
           <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Upload Documents (Max 10)
-              </label>
-              <input
-                type="file"
-                multiple
-                accept=".pdf,.jpg,.jpeg,.png"
-                onChange={handleFileChange}
-                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-              />
-            </div>
-
-            {files.map((file, idx) => (
-              <div key={idx} className="p-4 bg-gray-50 rounded-lg">
-                <p className="text-sm font-medium text-gray-700 mb-2">{file.name}</p>
-                <select
-                  value={docTypes[idx] || ""}
-                  onChange={(e) => handleDocTypeChange(idx, e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  required
-                >
-                  <option value="">Select Document Type</option>
-                  {DOCUMENT_TYPES.map((type) => (
-                    <option key={type.value} value={type.value}>
-                      {type.label}
-                    </option>
-                  ))}
-                </select>
+            {DOCUMENT_TYPES.map((docType) => (
+              <div key={docType.value} className="p-4 border border-gray-200 rounded-lg">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {docType.label} <span className="text-red-500">*</span>
+                </label>
+                {files[docType.value] ? (
+                  <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200">
+                    <div className="flex items-center space-x-3">
+                      <svg
+                        className="w-5 h-5 text-green-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                      <span className="text-sm font-medium text-gray-900">
+                        {files[docType.value].name}
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveFile(docType.value)}
+                      className="text-red-600 hover:text-red-800 text-sm font-medium"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ) : (
+                  <div>
+                    <input
+                      id={`file-${docType.value}`}
+                      type="file"
+                      accept=".pdf,.jpg,.jpeg,.png"
+                      onChange={(e) => handleFileChange(docType.value, e)}
+                      className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      Accepted formats: PDF, JPG, JPEG, PNG
+                    </p>
+                  </div>
+                )}
               </div>
             ))}
           </div>
 
           <button
             type="submit"
-            disabled={loading || files.length === 0}
+            disabled={loading || Object.keys(files).length === 0}
             className="mt-6 w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition"
           >
             {loading ? "Submitting..." : "Submit Documents"}
@@ -157,7 +207,12 @@ const Verification = () => {
           <p className="text-sm font-semibold text-yellow-800 mb-2">Required Documents:</p>
           <ul className="text-sm text-yellow-700 space-y-1">
             {DOCUMENT_TYPES.map((type) => (
-              <li key={type.value}>• {type.label}</li>
+              <li key={type.value} className="flex items-center space-x-2">
+                <span>• {type.label}</span>
+                {files[type.value] && (
+                  <span className="text-green-600 font-medium">(Uploaded)</span>
+                )}
+              </li>
             ))}
           </ul>
         </div>

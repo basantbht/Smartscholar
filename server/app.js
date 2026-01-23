@@ -5,6 +5,8 @@ import { config } from "dotenv";
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
+import "./config/cloudinary.js"; // Add this line
+
 
 import { errorMiddleware } from "./middlewares/error.js";
 
@@ -12,6 +14,7 @@ import authRoutes from "./routes/authRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import collegeRoutes from "./routes/collegeRoutes.js";
 import studentRoutes from "./routes/studentRoutes.js";
+import collegeEventRoutes from "./routes/collegeEventRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 
 config();
@@ -44,6 +47,7 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/college", collegeRoutes);
 app.use("/api/v1/student", studentRoutes);
+app.use("/api/v1/events", collegeEventRoutes);
 app.use("/api/v1/notifications", notificationRoutes);
 
 app.use(errorMiddleware);

@@ -1,6 +1,6 @@
 import express from "express";
 import { isAuthenticated, isAuthorized } from "../middlewares/authMiddleware.js";
-import { upload, handleUploadError } from "../middlewares/upload.js";
+import { uploadImage, handleUploadError, uploadDocument } from "../middlewares/upload.js";
 import {
   listPublicPosts,
   getPost,
@@ -31,7 +31,7 @@ router.post(
   "/posts/:postId/apply",
   isAuthenticated,
   isAuthorized("Student"),
-  upload.array("docs", 10),
+  uploadDocument.array("docs", 10),
   handleUploadError,
   applyToPost
 );

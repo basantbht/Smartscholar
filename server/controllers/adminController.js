@@ -31,6 +31,11 @@ export const reviewCollegeVerification = asyncHandler(async (req, res, next) => 
     return next(new ErrorHandler("Invalid action", 400));
   }
 
+  // Require feedback when rejecting
+  if (action === "reject" && (!adminFeedback || !adminFeedback.trim())) {
+    return next(new ErrorHandler("Feedback is required when rejecting verification", 400));
+  }
+
   const item = await CollegeVerification.findOne({ college: collegeId });
   if (!item) return next(new ErrorHandler("Verification not found", 404));
 
@@ -54,7 +59,7 @@ export const reviewCollegeVerification = asyncHandler(async (req, res, next) => 
     });
   } else {
     item.status = "rejected";
-    item.adminFeedback = adminFeedback || "Please update documents and resubmit.";
+    item.adminFeedback = adminFeedback.trim();
     college.verificationStatus = "rejected";
 
     await notifyUser({
@@ -76,5 +81,97 @@ export const reviewCollegeVerification = asyncHandler(async (req, res, next) => 
     success: true,
     message: `College ${action}d successfully`,
     data: { item },
+  });
+});
+
+// Get all colleges
+export const getAllColleges = asyncHandler(async (req, res, next) => {
+  const { verificationStatus, search, page = 1, limit = 10 } = req.query;
+
+  // Build query
+  const query = { role: "College" };
+
+  // Filter by verification status if provided
+  if (verificationStatus) {
+    query.verificationStatus = verificationStatus;
+  }
+
+  // Search by college name or university affiliation
+  if (search) {
+    query.$or = [
+      { "collegeProfile.collegeName": { $regex: search, $options: "i" } },
+      { "collegeProfile.universityAffiliation": { $regex: search, $options: "i" } },
+    ];
+  }
+
+  // Calculate pagination
+  const skip = (page - 1) * limit;
+
+  // Fetch colleges
+  const colleges = await User.find(query)
+    .select("-password -resetPasswordToken -resetPasswordExpire")
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(parseInt(limit));
+
+  // Get total count for pagination
+  const total = await User.countDocuments(query);
+
+  res.status(200).json({
+    success: true,
+    message: "Colleges fetched successfully",
+    data: {
+      colleges,
+      pagination: {
+        total,
+        page: parseInt(page),
+        limit: parseInt(limit),
+        totalPages: Math.ceil(total / limit),
+      },
+    },
+  });
+});
+
+// Get single college details
+export const getCollegeById = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+
+  const college = await User.findOne({ _id: id, role: "College" })
+    .select("-password -resetPasswordToken -resetPasswordExpire");
+
+  if (!college) {
+    return next(new ErrorHandler("College not found", 404));
+  }
+
+  res.status(200).json({
+    success: true,
+    message: "College details fetched successfully",
+    data: { college },
+  });
+});
+
+// Update college verification status
+export const updateCollegeVerification = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const { verificationStatus } = req.body;
+
+  if (!["pending", "approved", "rejected"].includes(verificationStatus)) {
+    return next(new ErrorHandler("Invalid verification status", 400));
+  }
+
+  const college = await User.findOne({ _id: id, role: "College" });
+
+  if (!college) {
+    return next(new ErrorHandler("College not found", 404));
+  }
+
+  college.verificationStatus = verificationStatus;
+  college.isVerified = verificationStatus === "approved";
+  await college.save();
+
+  res.status(200).json({
+    success: true,
+    message: "College verification status updated successfully",
+    data: { college },
   });
 });

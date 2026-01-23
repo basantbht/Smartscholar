@@ -24,11 +24,35 @@ export const CollegeProvider = ({ children }) => {
     }
   };
 
+  // Create college profile
+  const createProfile = async (data) => {
+    setLoading(true);
+    try {
+      const config = data instanceof FormData 
+        ? { headers: { "Content-Type": "multipart/form-data" } }
+        : {};
+        
+      const res = await api.post("/college/profile", data, config);
+      toast.success("Profile created successfully");
+      setProfile(res.data?.data?.college);
+      return res.data;
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to create profile");
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Update college profile
   const updateProfile = async (data) => {
     setLoading(true);
     try {
-      const res = await api.put("/college/profile", data);
+      const config = data instanceof FormData 
+        ? { headers: { "Content-Type": "multipart/form-data" } }
+        : {};
+        
+      const res = await api.put("/college/profile", data, config);
       toast.success("Profile updated successfully");
       setProfile(res.data?.data?.college);
       return res.data;
@@ -64,7 +88,7 @@ export const CollegeProvider = ({ children }) => {
       return res.data;
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to submit documents");
-      console.log(error)
+      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -166,6 +190,7 @@ export const CollegeProvider = ({ children }) => {
       sessions,
       loading,
       fetchProfile,
+      createProfile,
       updateProfile,
       fetchVerification,
       submitVerification,

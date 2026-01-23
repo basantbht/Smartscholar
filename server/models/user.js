@@ -11,6 +11,8 @@ const collegeProfileSchema = new mongoose.Schema(
     phone: { type: String, trim: true, default: null },
     website: { type: String, trim: true, default: null },
     description: { type: String, trim: true, default: null },
+        image: { type: String, trim: true, default: null }, // Add this line
+
   },
   { _id: false }
 );
@@ -25,7 +27,7 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
-    password: { type: String, required: true, minlength: 6, select: false },
+    password: { type: String, required: true, minlength: 1, select: false },
     role: {
       type: String,
       enum: ["Student", "College", "Admin"],

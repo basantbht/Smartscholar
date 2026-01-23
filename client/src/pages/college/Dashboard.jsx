@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useCollege } from "../../context/CollegeContext";
 import { useEffect } from "react";
+import { UserCog } from "lucide-react";
 
 const CollegeDashboard = () => {
   const { user } = useAuth();
@@ -27,15 +28,24 @@ const CollegeDashboard = () => {
   return (
     <div className="mt-10 max-w-6xl mx-auto">
       <div className="bg-white shadow rounded-2xl p-8">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-3xl font-bold text-blue-900">College Dashboard</h1>
             <p className="text-gray-600 mt-2">
               Welcome back, <span className="font-semibold">{user?.name}</span>
             </p>
           </div>
-          <div className={`px-4 py-2 rounded-full ${getStatusColor(user?.verificationStatus)}`}>
-            <span className="font-semibold capitalize">{user?.verificationStatus}</span>
+          <div className="flex items-center gap-3">
+            <div className={`px-4 py-2 rounded-full ${getStatusColor(user?.verificationStatus)}`}>
+              <span className="font-semibold capitalize">{user?.verificationStatus}</span>
+            </div>
+            <Link
+              to="/college/profile"
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+            >
+              <UserCog className="w-4 h-4" />
+              <span className="font-medium">Update Profile</span>
+            </Link>
           </div>
         </div>
 

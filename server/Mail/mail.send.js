@@ -14,7 +14,6 @@ const transporter = nodemailer.createTransport({
 /* ---------------- Generic Sender ---------------- */
 export async function sendEmail({ to, subject, text, html }) {
   try {
-    console.log(to,subject,text,html)
     if (!to) throw new Error("Missing recipient email");
     if (!subject) throw new Error("Missing subject");
     if (!text && !html) throw new Error("Missing email content");
