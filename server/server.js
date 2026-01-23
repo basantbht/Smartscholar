@@ -1,13 +1,17 @@
 import app from "./app.js";
-// import {v2 as cloudinary} from "cloudinary"
+import { connectDb } from "./config/db.js";
 
-// cloudinary.config({
-//     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-//     api_key: process.env.CLOUDINARY_API_KEY,
-//     api_secret: process.env.CLOUDINARY_API_SECRET
-// })
+await connectDb();
 
+const port = process.env.PORT || 4000;
+const server = app.listen(port, () => console.log(`Server is running on ${port}`));
 
-app.listen(process.env.PORT, () => {
-    console.log(`Server is running on port ${process.env.PORT} in ${process.env.NODE_ENV} mode.`)
-})
+process.on("unhandledRejection", (err) => {
+  console.log(`Unhandled Rejection: ${err.message}`);
+  server.close(() => process.exit(1));
+});
+
+process.on("uncaughtException", (err) => {
+  console.log(`Uncaught Exception: ${err.message}`);
+  process.exit(1);
+});

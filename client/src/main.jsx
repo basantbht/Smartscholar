@@ -1,13 +1,19 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import { BrowserRouter } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
 import './index.css'
-import App from './App.jsx'
-import { BrowserRouter } from 'react-router-dom'
+import { CollegeProvider } from "./context/CollegeContext";
 
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <React.StrictMode>
     <BrowserRouter>
-    <App />
+      <AuthProvider>
+        <CollegeProvider>
+          <App />
+          </CollegeProvider>
+      </AuthProvider>
     </BrowserRouter>
-  </StrictMode>,
-)
+  </React.StrictMode>
+);
