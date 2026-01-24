@@ -1,140 +1,165 @@
-import React, { useState } from 'react';
-import { Plus, Calendar, MapPin, Users, Clock, Edit, Trash2, X, Search, Filter, Award, DollarSign, Link as LinkIcon } from 'lucide-react';
+import React, { useMemo, useState } from 'react';
+import {
+  Plus,
+  Calendar,
+  MapPin,
+  Users,
+  Clock,
+  Edit,
+  Trash2,
+  X,
+  Search,
+  Award,
+  DollarSign,
+  Link as LinkIcon,
+  Globe,
+  Tag,
+} from 'lucide-react';
 import { useEvents } from '../../context/EventContext';
 
 const CollegeEvents = () => {
-  const { 
-    events, 
-    loading, 
-    createLoading, 
-    updateLoading, 
+  const {
+    events,
+    loading,
+    createLoading,
+    updateLoading,
     deleteLoading,
-    createEvent, 
-    updateEvent, 
-    deleteEvent 
+    createEvent,
+    updateEvent,
+    deleteEvent,
   } = useEvents();
-  
+
   const [showModal, setShowModal] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterType, setFilterType] = useState('all');
-  
+
   const [formData, setFormData] = useState({
     // Basic Information
     title: '',
     description: '',
-    
+
     // Event Type & Category
     eventType: 'hackathon',
     category: [],
-    
+
     // Event Dates
     startDate: '',
     endDate: '',
     registrationDeadline: '',
-    
+
     // Location
     venue: '',
     address: '',
     isOnline: false,
     onlineLink: '',
-    
+
     // Organizer
     organizer: '',
     organizerEmail: '',
     organizerPhone: '',
-    
+
     // Registration
     registrationFee: 0,
     maxParticipants: '',
     teamSizeMin: 1,
     teamSizeMax: 1,
-    
+
     // Eligibility
     eligibility: '',
-    
-    // Images
+
+    // Images (base64)
     banner: '',
     thumbnail: '',
-    
+
     // Additional Info
     prizes: '',
     tags: [],
-    
+
     // Status
     status: 'published',
-    
+
     // Links
     website: '',
-    registrationLink: ''
+    registrationLink: '',
   });
-  
+
   const [formErrors, setFormErrors] = useState({});
+
+  const fileToBase64 = (file) =>
+    new Promise((resolve, reject) => {
+      if (!file) return resolve('');
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result || ''));
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
 
   const validateForm = () => {
     const errors = {};
-    
+
     if (!formData.title.trim()) {
       errors.title = 'Title is required';
     } else if (formData.title.length > 200) {
       errors.title = 'Title must be less than 200 characters';
     }
-    
+
     if (!formData.description.trim()) {
       errors.description = 'Description is required';
     }
-    
+
     if (!formData.startDate) {
       errors.startDate = 'Start date is required';
     }
-    
+
     if (!formData.endDate) {
       errors.endDate = 'End date is required';
     }
-    
+
     if (formData.endDate && new Date(formData.endDate) < new Date(formData.startDate)) {
       errors.endDate = 'End date must be after start date';
     }
-    
+
     if (!formData.registrationDeadline) {
       errors.registrationDeadline = 'Registration deadline is required';
     }
-    
-    if (formData.registrationDeadline && new Date(formData.registrationDeadline) > new Date(formData.startDate)) {
+
+    if (
+      formData.registrationDeadline &&
+      formData.startDate &&
+      new Date(formData.registrationDeadline) > new Date(formData.startDate)
+    ) {
       errors.registrationDeadline = 'Registration deadline must be before start date';
     }
-    
+
     if (!formData.venue.trim()) {
       errors.venue = 'Venue is required';
     }
-    
+
     if (!formData.organizer.trim()) {
       errors.organizer = 'Organizer name is required';
     }
-    
+
     if (formData.organizerEmail && !/\S+@\S+\.\S+/.test(formData.organizerEmail)) {
       errors.organizerEmail = 'Invalid email format';
     }
-    
+
     if (formData.isOnline && !formData.onlineLink.trim()) {
       errors.onlineLink = 'Online link is required for online events';
     }
-    
-    if (formData.teamSizeMax < formData.teamSizeMin) {
+
+    if (Number(formData.teamSizeMax) < Number(formData.teamSizeMin)) {
       errors.teamSizeMax = 'Max team size must be >= min team size';
     }
-    
+
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
 
     const payload = {
       title: formData.title,
@@ -155,7 +180,7 @@ const CollegeEvents = () => {
       maxParticipants: formData.maxParticipants ? Number(formData.maxParticipants) : null,
       teamSize: {
         min: Number(formData.teamSizeMin) || 1,
-        max: Number(formData.teamSizeMax) || 1
+        max: Number(formData.teamSizeMax) || 1,
       },
       eligibility: formData.eligibility || null,
       banner: formData.banner || null,
@@ -164,7 +189,7 @@ const CollegeEvents = () => {
       tags: formData.tags,
       status: formData.status,
       website: formData.website || null,
-      registrationLink: formData.registrationLink || null
+      registrationLink: formData.registrationLink || null,
     };
 
     try {
@@ -180,10 +205,7 @@ const CollegeEvents = () => {
   };
 
   const handleDelete = async (eventId) => {
-    if (!window.confirm('Are you sure you want to delete this event?')) {
-      return;
-    }
-
+    if (!window.confirm('Are you sure you want to delete this event?')) return;
     try {
       await deleteEvent(eventId);
     } catch (error) {
@@ -200,7 +222,9 @@ const CollegeEvents = () => {
       category: event.category || [],
       startDate: event.startDate ? new Date(event.startDate).toISOString().slice(0, 16) : '',
       endDate: event.endDate ? new Date(event.endDate).toISOString().slice(0, 16) : '',
-      registrationDeadline: event.registrationDeadline ? new Date(event.registrationDeadline).toISOString().slice(0, 16) : '',
+      registrationDeadline: event.registrationDeadline
+        ? new Date(event.registrationDeadline).toISOString().slice(0, 16)
+        : '',
       venue: event.venue || '',
       address: event.address || '',
       isOnline: event.isOnline || false,
@@ -219,7 +243,7 @@ const CollegeEvents = () => {
       tags: event.tags || [],
       status: event.status,
       website: event.website || '',
-      registrationLink: event.registrationLink || ''
+      registrationLink: event.registrationLink || '',
     });
     setShowModal(true);
   };
@@ -253,18 +277,24 @@ const CollegeEvents = () => {
       tags: [],
       status: 'published',
       website: '',
-      registrationLink: ''
+      registrationLink: '',
     });
     setFormErrors({});
   };
 
-  const filteredEvents = events.filter(event => {
-    const matchesSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         event.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatusFilter = filterStatus === 'all' || event.status === filterStatus;
-    const matchesTypeFilter = filterType === 'all' || event.eventType === filterType;
-    return matchesSearch && matchesStatusFilter && matchesTypeFilter;
-  });
+  const filteredEvents = useMemo(() => {
+    return (events || []).filter((event) => {
+      const title = String(event.title || '').toLowerCase();
+      const desc = String(event.description || '').toLowerCase();
+      const q = searchTerm.toLowerCase();
+
+      const matchesSearch = title.includes(q) || desc.includes(q);
+      const matchesStatusFilter = filterStatus === 'all' || event.status === filterStatus;
+      const matchesTypeFilter = filterType === 'all' || event.eventType === filterType;
+
+      return matchesSearch && matchesStatusFilter && matchesTypeFilter;
+    });
+  }, [events, searchTerm, filterStatus, filterType]);
 
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
@@ -273,11 +303,30 @@ const CollegeEvents = () => {
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     });
   };
 
   const isSubmitting = createLoading || updateLoading;
+
+  const statusBadgeClass = (status) => {
+    if (status === 'published') return 'bg-green-50 text-green-700 ring-1 ring-green-200';
+    if (status === 'cancelled') return 'bg-red-50 text-red-700 ring-1 ring-red-200';
+    return 'bg-gray-50 text-gray-700 ring-1 ring-gray-200';
+  };
+
+  const typeBadgeClass = leading =>
+    leading
+      ? 'bg-blue-50 text-blue-700 ring-1 ring-blue-200'
+      : 'bg-indigo-50 text-indigo-700 ring-1 ring-indigo-200';
+
+  const quickMetrics = useMemo(() => {
+    const total = (events || []).length;
+    const published = (events || []).filter((e) => e.status === 'published').length;
+    const draft = (events || []).filter((e) => e.status === 'draft').length;
+    const cancelled = (events || []).filter((e) => e.status === 'cancelled').length;
+    return { total, published, draft, cancelled };
+  }, [events]);
 
   if (loading) {
     return (
@@ -290,11 +339,45 @@ const CollegeEvents = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Event Management</h1>
-          <p className="text-gray-600">Create and manage college events</p>
+        {/* Header */}
+        <div className="mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-1">Event Management</h1>
+              <p className="text-gray-600">Create and manage college events</p>
+            </div>
+
+            <button
+              onClick={() => setShowModal(true)}
+              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition font-medium"
+            >
+              <Plus className="w-5 h-5" />
+              Create Event
+            </button>
+          </div>
+
+          {/* Quick stats */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5">
+            <div className="bg-white rounded-xl border border-gray-200 p-4">
+              <p className="text-xs text-gray-500">Total</p>
+              <p className="text-2xl font-bold text-gray-900">{quickMetrics.total}</p>
+            </div>
+            <div className="bg-white rounded-xl border border-gray-200 p-4">
+              <p className="text-xs text-gray-500">Published</p>
+              <p className="text-2xl font-bold text-gray-900">{quickMetrics.published}</p>
+            </div>
+            <div className="bg-white rounded-xl border border-gray-200 p-4">
+              <p className="text-xs text-gray-500">Draft</p>
+              <p className="text-2xl font-bold text-gray-900">{quickMetrics.draft}</p>
+            </div>
+            <div className="bg-white rounded-xl border border-gray-200 p-4">
+              <p className="text-xs text-gray-500">Cancelled</p>
+              <p className="text-2xl font-bold text-gray-900">{quickMetrics.cancelled}</p>
+            </div>
+          </div>
         </div>
 
+        {/* Filters */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
           <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
             <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
@@ -305,10 +388,10 @@ const CollegeEvents = () => {
                   placeholder="Search events..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg w-full sm:w-72 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
-              
+
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value)}
@@ -323,7 +406,7 @@ const CollegeEvents = () => {
                 <option value="webinar">Webinar</option>
                 <option value="other">Other</option>
               </select>
-              
+
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
@@ -336,25 +419,41 @@ const CollegeEvents = () => {
               </select>
             </div>
 
-            <button
-              onClick={() => setShowModal(true)}
-              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition font-medium"
-            >
-              <Plus className="w-5 h-5" />
-              Create Event
-            </button>
+            <div className="w-full lg:w-auto flex items-center justify-between lg:justify-end gap-3">
+              <div className="text-sm text-gray-600">
+                Showing <span className="font-semibold text-gray-900">{filteredEvents.length}</span>{' '}
+                result{filteredEvents.length === 1 ? '' : 's'}
+              </div>
+
+              {(searchTerm || filterStatus !== 'all' || filterType !== 'all') && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearchTerm('');
+                    setFilterStatus('all');
+                    setFilterType('all');
+                  }}
+                  className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition text-sm font-medium"
+                >
+                  Clear
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
+        {/* EVENTS LIST - ROW VIEW */}
         {filteredEvents.length === 0 ? (
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
             <Calendar className="w-16 h-16 text-gray-300 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              {searchTerm || filterStatus !== 'all' || filterType !== 'all' ? 'No events found' : 'No events yet'}
+              {searchTerm || filterStatus !== 'all' || filterType !== 'all'
+                ? 'No events found'
+                : 'No events yet'}
             </h3>
             <p className="text-gray-600 mb-6">
               {searchTerm || filterStatus !== 'all' || filterType !== 'all'
-                ? 'Try adjusting your search or filters' 
+                ? 'Try adjusting your search or filters'
                 : 'Get started by creating your first event'}
             </p>
             {!searchTerm && filterStatus === 'all' && filterType === 'all' && (
@@ -368,127 +467,260 @@ const CollegeEvents = () => {
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredEvents.map((event) => (
-              <div
-                key={event._id}
-                className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition"
-              >
-                {event.thumbnail && (
-                  <img 
-                    src={event.thumbnail} 
-                    alt={event.title}
-                    className="w-full h-48 object-cover"
-                  />
-                )}
-                
-                <div className="p-6">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="inline-block px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
-                          {event.eventType}
-                        </span>
-                        <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
-                          event.status === 'published'
-                            ? 'bg-green-100 text-green-700'
-                            : event.status === 'cancelled'
-                            ? 'bg-red-100 text-red-700'
-                            : 'bg-gray-100 text-gray-700'
-                        }`}>
-                          {event.status}
-                        </span>
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            {/* Sticky header */}
+            <div className="hidden md:grid md:grid-cols-12 gap-4 px-5 py-3 bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-600 sticky top-0 z-10">
+              <div className="md:col-span-4">Event</div>
+              <div className="md:col-span-3">Schedule</div>
+              <div className="md:col-span-2">Location</div>
+              <div className="md:col-span-2">Details</div>
+              <div className="md:col-span-1 text-right">Actions</div>
+            </div>
+
+            <div className="divide-y divide-gray-200">
+              {filteredEvents.map((event, idx) => {
+                const isOnline = Boolean(event.isOnline);
+                const fee = Number(event.registrationFee || 0);
+                const hasFee = fee > 0;
+
+                return (
+                  <div
+                    key={event._id}
+                    className={`px-5 py-4 transition ${
+                      idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'
+                    } hover:bg-blue-50/30`}
+                  >
+                    <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
+                      {/* Event */}
+                      <div className="md:col-span-4">
+                        <div className="flex gap-3 items-start">
+                          {event.thumbnail ? (
+                            <img
+                              src={event.thumbnail}
+                              alt={event.title}
+                              className="w-14 h-14 rounded-lg object-cover border border-gray-200 flex-shrink-0"
+                            />
+                          ) : (
+                            <div className="w-14 h-14 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center flex-shrink-0">
+                              <Calendar className="w-6 h-6 text-gray-400" />
+                            </div>
+                          )}
+
+                          <div className="min-w-0">
+                            <div className="flex flex-wrap items-center gap-2 mb-1">
+                              <span
+                                className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${typeBadgeClass(
+                                  true
+                                )}`}
+                              >
+                                {event.eventType || 'other'}
+                              </span>
+                              <span
+                                className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${statusBadgeClass(
+                                  event.status
+                                )}`}
+                              >
+                                {event.status}
+                              </span>
+                              {isOnline && (
+                                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 ring-1 ring-blue-200">
+                                  <Globe className="w-3.5 h-3.5" /> Online
+                                </span>
+                              )}
+                            </div>
+
+                            <h3 className="text-sm sm:text-base font-semibold text-gray-900 truncate">
+                              {event.title}
+                            </h3>
+                            <p className="text-sm text-gray-600 mt-1 line-clamp-2">
+                              {event.description}
+                            </p>
+
+                            {/* Tags */}
+                            {event.tags && event.tags.length > 0 && (
+                              <div className="flex flex-wrap gap-1 mt-2">
+                                {event.tags.slice(0, 4).map((tagItem, tIdx) => (
+                                  <span
+                                    key={`${event._id}-tag-${tIdx}`}
+                                    className="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded"
+                                  >
+                                    <Tag className="w-3 h-3" />
+                                    {tagItem}
+                                  </span>
+                                ))}
+                                {event.tags.length > 4 && (
+                                  <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">
+                                    +{event.tags.length - 4}
+                                  </span>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        </div>
                       </div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                        {event.title}
-                      </h3>
-                      {event.isOnline && (
-                        <span className="inline-block text-xs text-blue-600">🌐 Online Event</span>
+
+                      {/* Schedule */}
+                      <div className="md:col-span-3">
+                        <div className="space-y-2 text-sm">
+                          <div className="flex items-center gap-2 text-gray-700">
+                            <Calendar className="w-4 h-4 text-gray-400" />
+                            <span className="truncate">{formatDate(event.startDate)}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-gray-700">
+                            <Clock className="w-4 h-4 text-gray-400" />
+                            <span className="truncate">
+                              Ends: {event.endDate ? formatDate(event.endDate) : 'N/A'}
+                            </span>
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            Reg. deadline:{' '}
+                            <span className="font-medium text-gray-700">
+                              {event.registrationDeadline ? formatDate(event.registrationDeadline) : 'N/A'}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Location */}
+                      <div className="md:col-span-2">
+                        <div className="space-y-2 text-sm">
+                          <div className="flex items-center gap-2 text-gray-700">
+                            <MapPin className="w-4 h-4 text-gray-400" />
+                            <span className="line-clamp-2">
+                              {event.venue || (isOnline ? 'Online' : 'N/A')}
+                            </span>
+                          </div>
+
+                          {isOnline && event.onlineLink && (
+                            <a
+                              href={event.onlineLink}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 text-xs font-medium"
+                            >
+                              <LinkIcon className="w-4 h-4" />
+                              Join link
+                            </a>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Details */}
+                      <div className="md:col-span-2">
+                        <div className="space-y-2 text-sm text-gray-700">
+                          {hasFee ? (
+                            <div className="flex items-center gap-2">
+                              <DollarSign className="w-4 h-4 text-gray-400" />
+                              <span>Fee: ${fee}</span>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-2 text-gray-500">
+                              <DollarSign className="w-4 h-4 text-gray-300" />
+                              <span>Free</span>
+                            </div>
+                          )}
+
+                          {event.prizes ? (
+                            <div className="flex items-center gap-2">
+                              <Award className="w-4 h-4 text-gray-400" />
+                              <span className="line-clamp-2">{event.prizes}</span>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-2 text-gray-500">
+                              <Award className="w-4 h-4 text-gray-300" />
+                              <span>No prizes listed</span>
+                            </div>
+                          )}
+
+                          {event.maxParticipants ? (
+                            <div className="flex items-center gap-2">
+                              <Users className="w-4 h-4 text-gray-400" />
+                              <span>
+                                {event.currentParticipants || 0}/{event.maxParticipants}
+                              </span>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-2 text-gray-500">
+                              <Users className="w-4 h-4 text-gray-300" />
+                              <span>Unlimited</span>
+                            </div>
+                          )}
+
+                          {(event.website || event.registrationLink) && (
+                            <div className="flex flex-wrap gap-2 pt-1">
+                              {event.website && (
+                                <a
+                                  href={event.website}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="inline-flex items-center gap-1 text-xs font-medium text-blue-600 hover:text-blue-700"
+                                >
+                                  <Globe className="w-4 h-4" />
+                                  Website
+                                </a>
+                              )}
+                              {event.registrationLink && (
+                                <a
+                                  href={event.registrationLink}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="inline-flex items-center gap-1 text-xs font-medium text-blue-600 hover:text-blue-700"
+                                >
+                                  <LinkIcon className="w-4 h-4" />
+                                  Register
+                                </a>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Actions */}
+                      <div className="md:col-span-1 flex md:justify-end gap-2">
+                        <button
+                          onClick={() => handleEdit(event)}
+                          className="inline-flex items-center gap-2 px-3 py-2 md:px-2 md:py-2 text-blue-600 hover:bg-blue-100/60 rounded-lg transition disabled:opacity-50"
+                          title="Edit event"
+                          disabled={deleteLoading}
+                        >
+                          <Edit className="w-4 h-4" />
+                          <span className="md:hidden text-sm font-medium">Edit</span>
+                        </button>
+
+                        <button
+                          onClick={() => handleDelete(event._id)}
+                          className="inline-flex items-center gap-2 px-3 py-2 md:px-2 md:py-2 text-red-600 hover:bg-red-100/60 rounded-lg transition disabled:opacity-50"
+                          title="Delete event"
+                          disabled={deleteLoading}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                          <span className="md:hidden text-sm font-medium">Delete</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Mobile-only small footer */}
+                    <div className="md:hidden mt-3 flex flex-wrap items-center gap-2 text-xs text-gray-500">
+                      <span className="inline-flex items-center gap-1">
+                        <Calendar className="w-4 h-4 text-gray-400" />
+                        {formatDate(event.startDate)}
+                      </span>
+                      {event.venue && (
+                        <span className="inline-flex items-center gap-1">
+                          <MapPin className="w-4 h-4 text-gray-400" />
+                          {event.venue}
+                        </span>
                       )}
                     </div>
-                    
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => handleEdit(event)}
-                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
-                        title="Edit event"
-                        disabled={deleteLoading}
-                      >
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(event._id)}
-                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition disabled:opacity-50"
-                        title="Delete event"
-                        disabled={deleteLoading}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
                   </div>
-
-                  <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                    {event.description}
-                  </p>
-
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <Calendar className="w-4 h-4 text-gray-400" />
-                      <span>{formatDate(event.startDate)}</span>
-                    </div>
-
-                    {event.endDate && (
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <Clock className="w-4 h-4 text-gray-400" />
-                        <span>Ends: {formatDate(event.endDate)}</span>
-                      </div>
-                    )}
-
-                    {event.venue && (
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <MapPin className="w-4 h-4 text-gray-400" />
-                        <span className="line-clamp-1">{event.venue}</span>
-                      </div>
-                    )}
-
-                    {event.registrationFee > 0 && (
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <DollarSign className="w-4 h-4 text-gray-400" />
-                        <span>Fee: ${event.registrationFee}</span>
-                      </div>
-                    )}
-
-                    {event.prizes && (
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <Award className="w-4 h-4 text-gray-400" />
-                        <span className="line-clamp-1">{event.prizes}</span>
-                      </div>
-                    )}
-
-                    {event.maxParticipants && (
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <Users className="w-4 h-4 text-gray-400" />
-                        <span>{event.currentParticipants || 0}/{event.maxParticipants} registered</span>
-                      </div>
-                    )}
-                  </div>
-                  
-                  {event.tags && event.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-1 mt-3">
-                      {event.tags.slice(0, 3).map((tag, idx) => (
-                        <span key={idx} className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))}
+                );
+              })}
+            </div>
           </div>
         )}
       </div>
 
+      {/* MODAL */}
       {showModal && (
         <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 p-4 overflow-y-auto">
           <div className="bg-white rounded-xl shadow-xl max-w-4xl w-full my-8">
@@ -505,11 +737,16 @@ const CollegeEvents = () => {
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-6 space-y-6 max-h-[calc(100vh-200px)] overflow-y-auto">
+            <form
+              onSubmit={handleSubmit}
+              className="p-6 space-y-6 max-h-[calc(100vh-200px)] overflow-y-auto"
+            >
               {/* Basic Information */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Basic Information</h3>
-                
+                <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
+                  Basic Information
+                </h3>
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Event Title *
@@ -571,9 +808,7 @@ const CollegeEvents = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Status
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
                     <select
                       value={formData.status}
                       onChange={(e) => setFormData({ ...formData, status: e.target.value })}
@@ -590,8 +825,10 @@ const CollegeEvents = () => {
 
               {/* Dates */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Event Schedule</h3>
-                
+                <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
+                  Event Schedule
+                </h3>
+
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -636,7 +873,9 @@ const CollegeEvents = () => {
                     <input
                       type="datetime-local"
                       value={formData.registrationDeadline}
-                      onChange={(e) => setFormData({ ...formData, registrationDeadline: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, registrationDeadline: e.target.value })
+                      }
                       className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                         formErrors.registrationDeadline ? 'border-red-500' : 'border-gray-300'
                       }`}
@@ -651,8 +890,10 @@ const CollegeEvents = () => {
 
               {/* Location */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Location Details</h3>
-                
+                <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
+                  Location Details
+                </h3>
+
                 <div className="flex items-center gap-2 mb-4">
                   <input
                     type="checkbox"
@@ -688,9 +929,7 @@ const CollegeEvents = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Address
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
                     <input
                       type="text"
                       value={formData.address}
@@ -726,8 +965,10 @@ const CollegeEvents = () => {
 
               {/* Organizer */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Organizer Information</h3>
-                
+                <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
+                  Organizer Information
+                </h3>
+
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -785,8 +1026,10 @@ const CollegeEvents = () => {
 
               {/* Registration */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Registration & Participation</h3>
-                
+                <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
+                  Registration & Participation
+                </h3>
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -797,7 +1040,9 @@ const CollegeEvents = () => {
                       min="0"
                       step="0.01"
                       value={formData.registrationFee}
-                      onChange={(e) => setFormData({ ...formData, registrationFee: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, registrationFee: e.target.value })
+                      }
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="0"
                       disabled={isSubmitting}
@@ -872,8 +1117,10 @@ const CollegeEvents = () => {
 
               {/* Additional Info */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Additional Information</h3>
-                
+                <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
+                  Additional Information
+                </h3>
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Prizes & Rewards
@@ -895,7 +1142,15 @@ const CollegeEvents = () => {
                   <input
                     type="text"
                     value={formData.tags.join(', ')}
-                    onChange={(e) => setFormData({ ...formData, tags: e.target.value.split(',').map(t => t.trim()).filter(t => t) })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        tags: e.target.value
+                          .split(',')
+                          .map((t) => t.trim())
+                          .filter((t) => t),
+                      })
+                    }
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="e.g., AI, Machine Learning, Innovation"
                     disabled={isSubmitting}
@@ -909,7 +1164,15 @@ const CollegeEvents = () => {
                   <input
                     type="text"
                     value={formData.category.join(', ')}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value.split(',').map(c => c.trim()).filter(c => c) })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        category: e.target.value
+                          .split(',')
+                          .map((c) => c.trim())
+                          .filter((c) => c),
+                      })
+                    }
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="e.g., Technology, Business, Arts"
                     disabled={isSubmitting}
@@ -920,7 +1183,7 @@ const CollegeEvents = () => {
               {/* Links & Images */}
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Links & Media</h3>
-                
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -943,7 +1206,9 @@ const CollegeEvents = () => {
                     <input
                       type="url"
                       value={formData.registrationLink}
-                      onChange={(e) => setFormData({ ...formData, registrationLink: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, registrationLink: e.target.value })
+                      }
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="https://forms.example.com"
                       disabled={isSubmitting}
@@ -951,31 +1216,48 @@ const CollegeEvents = () => {
                   </div>
                 </div>
 
+                {/* Image inputs */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Banner Image URL
+                      Banner Image
                     </label>
                     <input
-                      type="url"
-                      value={formData.banner}
-                      onChange={(e) => setFormData({ ...formData, banner: e.target.value })}
+                      type="file"
+                      accept="image/*"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        try {
+                          const base64 = await fileToBase64(file);
+                          setFormData({ ...formData, banner: base64 });
+                        } catch (err) {
+                          console.error('Failed to read banner file:', err);
+                        }
+                      }}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="https://example.com/banner.jpg"
                       disabled={isSubmitting}
                     />
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Thumbnail Image URL
+                      Thumbnail Image
                     </label>
                     <input
-                      type="url"
-                      value={formData.thumbnail}
-                      onChange={(e) => setFormData({ ...formData, thumbnail: e.target.value })}
+                      type="file"
+                      accept="image/*"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        try {
+                          const base64 = await fileToBase64(file);
+                          setFormData({ ...formData, thumbnail: base64 });
+                        } catch (err) {
+                          console.error('Failed to read thumbnail file:', err);
+                        }
+                      }}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="https://example.com/thumb.jpg"
                       disabled={isSubmitting}
                     />
                   </div>
@@ -996,7 +1278,7 @@ const CollegeEvents = () => {
                   disabled={isSubmitting}
                   className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isSubmitting ? 'Saving...' : (editingEvent ? 'Update Event' : 'Create Event')}
+                  {isSubmitting ? 'Saving...' : editingEvent ? 'Update Event' : 'Create Event'}
                 </button>
               </div>
             </form>

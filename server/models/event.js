@@ -104,10 +104,10 @@ const eventSchema = new mongoose.Schema(
       default: 0,
     },
     
-    teamSize: {
+   
       min: { type: Number, default: 1 },
       max: { type: Number, default: 1 },
-    },
+  
     
     // Eligibility
     eligibility: {

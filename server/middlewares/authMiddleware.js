@@ -22,6 +22,7 @@ export const isAuthenticated = asyncHandler(async (req, res, next) => {
 
 export const isAuthorized = (...roles) => (req, res, next) => {
   const role = req.user?.role;
+
   if (!role || !roles.includes(role)) {
     return next(new ErrorHandler("Not authorized", 403));
   }

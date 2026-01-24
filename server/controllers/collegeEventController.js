@@ -110,7 +110,7 @@ export const getEventById = asyncHandler(async (req, res, next) => {
 // Update Event
 export const updateEvent = asyncHandler(async (req, res, next) => {
   ensureApprovedCollege(req, next);
-
+console.log(req.files)
   const { eventId } = req.params;
 
   const event = await Event.findById(eventId);

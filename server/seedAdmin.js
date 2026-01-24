@@ -13,18 +13,18 @@ const seedAdmin = async () => {
 
     const existing = await User.findOne({ email: adminEmail });
     if (existing) {
-      console.log("✅ Admin already exists:", adminEmail);
+      console.log("Admin already exists:", adminEmail);
       process.exit(0);
     }
 
     const admin = await User.create({
       name: "Super Admin",
       email: adminEmail,
-      password: adminPassword, // ✅ hashed by User model middleware
+      password: adminPassword,
       role: "Admin",
     });
 
-    console.log("✅ Admin created successfully:");
+    console.log("Admin created successfully:");
     console.log({
       email: admin.email,
       password: adminPassword,

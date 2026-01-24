@@ -28,14 +28,14 @@ router.post(
 router.get(
   "/",
   isAuthenticated,
-  isAuthorized("College"),
+  isAuthorized("College", "Student"),
   getMyEvents
 );
 
 router.get(
   "/:eventId",
   isAuthenticated,
-  isAuthorized("College"),
+  isAuthorized("College","Student"),
   getEventById
 );
 
