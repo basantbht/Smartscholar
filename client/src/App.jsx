@@ -43,6 +43,7 @@ import CollegesList from "./pages/admin/CollegesList";
 import AdminSettings from "./pages/admin/AdminSettings";
 import CollegeCourses from "./pages/college/CollegeCourses";
 import CollegeEvents from "./pages/college/CollegeEvents";
+import Events from "./pages/student/Events";
 
 const App = () => {
   const location = useLocation();
@@ -79,18 +80,16 @@ const App = () => {
         {/* PUBLIC STUDENT SITE */}
         <Route element={<StudentLayout />}>
           <Route path="/" element={<Home />} />
-          <Route path="/universities" element={<Universities />} />
           <Route path="/colleges" element={<Colleges />} />
           <Route path="/courses" element={<Courses />} />
-          <Route path="/degrees" element={<Degrees />} />
-          <Route path="/admissions" element={<Admissions />} />
+          <Route path="/events" element={<Events />} />
           <Route path="/scholarships" element={<Scholarships />} />
         </Route>
 
         {/* STUDENT DASHBOARD */}
         <Route element={<RoleGuard allowedRoles={["Student"]} />}>
           <Route element={<StudentLayout />}>
-            <Route path="/student" element={<StudentDashboard />} />
+            <Route path="/student" element={<Home />} />
           </Route>
         </Route>
 

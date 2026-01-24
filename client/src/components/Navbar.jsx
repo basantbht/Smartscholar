@@ -2,12 +2,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 const navItems = [
-  { name: "Universities", path: "/universities" },
+  { name: "Home", path: "/" },
   { name: "Colleges", path: "/colleges" },
   { name: "Courses", path: "/courses" },
-  { name: "Degrees", path: "/degrees" },
-  { name: "Admissions", path: "/admissions" },
   { name: "Scholarships", path: "/scholarships" },
+  { name: "Events", path: "/events" },
 ];
 
 const Navbar = () => {
@@ -33,15 +32,16 @@ const Navbar = () => {
             </Link>
           </div>
 
-          <div className="hidden md:flex gap-6 font-medium text-gray-700 text-[1.02rem]">
-            {navItems.map((item) => (
-              <Link key={item.name} to={item.path}>
-                <p className="hover:text-blue-900 cursor-pointer transition-colors duration-200">
-                  {item.name}
-                </p>
-              </Link>
-            ))}
-          </div>
+
+        </div>
+        <div className="hidden md:flex gap-6 font-medium text-gray-700 text-[1.03rem]">
+          {navItems.map((item) => (
+            <Link key={item.name} to={item.path}>
+              <p className="hover:text-blue-900 cursor-pointer transition-colors duration-200">
+                {item.name}
+              </p>
+            </Link>
+          ))}
         </div>
 
         <div className="flex gap-4 items-center">

@@ -4,9 +4,9 @@ import {
   getPendingCollegeVerifications,
   getCollegeVerification,
   reviewCollegeVerification,
-  getAllColleges,
-  getCollegeById,
   updateCollegeVerification,
+   getAllColleges,
+  getCollegeById,
 } from "../controllers/adminController.js";
 
 const router = express.Router();
@@ -34,7 +34,7 @@ router.put(
 
 
 // Get all colleges
-router.get("/colleges", isAuthenticated, isAuthorized("Admin"), getAllColleges);
+router.get("/colleges", isAuthenticated, isAuthorized("Admin","Student"), getAllColleges);
 
 // Get single college
 router.get("/colleges/:id", isAuthenticated, isAuthorized("Admin"), getCollegeById);

@@ -144,3 +144,89 @@ export const listMySessions = asyncHandler(async (req, res) => {
 
   res.status(200).json({ success: true, data: { sessions } });
 });
+
+
+export const getAllColleges = asyncHandler(async (req, res) => {
+  const { search, verificationStatus, page = 1, limit = 12 } = req.query;
+
+  // Build filter - only fetch colleges with role "College"
+  const filter = { role: "College" };
+  
+  // Filter by verification status (default to approved only)
+  if (verificationStatus) {
+    filter.verificationStatus = verificationStatus;
+  } else {
+    filter.verificationStatus = "approved"; // Default to approved colleges
+  }
+
+  // Search by college name or university affiliation
+  if (search) {
+    filter.$or = [
+      { "collegeProfile.collegeName": { $regex: search, $options: "i" } },
+      { "collegeProfile.universityAffiliation": { $regex: search, $options: "i" } },
+      { name: { $regex: search, $options: "i" } },
+    ];
+  }
+
+  // Pagination
+  const pageNum = parseInt(page);
+  const limitNum = parseInt(limit);
+  const skip = (pageNum - 1) * limitNum;
+
+  // Get total count
+  const total = await User.countDocuments(filter);
+
+  // Fetch colleges with pagination
+  const colleges = await User.find(filter)
+    .select("name email collegeProfile verificationStatus createdAt")
+    .sort({ "collegeProfile.collegeName": 1 })
+    .skip(skip)
+    .limit(limitNum);
+
+  res.status(200).json({
+    success: true,
+    data: {
+      colleges,
+      count: colleges.length,
+      pagination: {
+        page: pageNum,
+        limit: limitNum,
+        total,
+        totalPages: Math.ceil(total / limitNum),
+      },
+    },
+  });
+});
+
+export const getCollegeById = asyncHandler(async (req, res, next) => {
+  const { collegeId } = req.params;
+
+  const college = await User.findById(collegeId).select(
+    "name email collegeProfile verificationStatus createdAt"
+  );
+
+  if (!college) {
+    return next(new ErrorHandler("College not found", 404));
+  }
+
+  if (college.role !== "College") {
+    return next(new ErrorHandler("User is not a college", 400));
+  }
+
+  // Optionally, you can also fetch posts created by this college
+  const posts = await Post.find({
+    createdByCollege: collegeId,
+    status: "published",
+  })
+    .select("postType title description deadline createdAt")
+    .sort({ createdAt: -1 })
+    .limit(10);
+
+  res.status(200).json({
+    success: true,
+    data: {
+      college,
+      recentPosts: posts,
+    },
+  });
+});

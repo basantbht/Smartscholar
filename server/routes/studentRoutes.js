@@ -8,11 +8,13 @@ import {
   listMyApplications,
   requestSession,
   listMySessions,
+  getAllColleges,
+  getCollegeById,
 } from "../controllers/studentController.js";
 
 const router = express.Router();
 
-// public listing (still requires login in many systems; you can remove auth if you want)
+// Public post listing
 router.get(
   "/posts",
   isAuthenticated,
@@ -55,6 +57,21 @@ router.get(
   isAuthenticated,
   isAuthorized("Student"),
   listMySessions
+);
+
+// College routes
+router.get(
+  "/colleges",
+  isAuthenticated,
+  isAuthorized("Student"),
+  getAllColleges
+);
+
+router.get(
+  "/colleges/:collegeId",
+  isAuthenticated,
+  isAuthorized("Student"),
+  getCollegeById
 );
 
 export default router;
