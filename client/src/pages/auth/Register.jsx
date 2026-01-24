@@ -61,7 +61,7 @@ const Register = () => {
               <input
                 type="text"
                 className="w-full border border-gray-300 rounded-lg py-2 pl-10 pr-3 focus:outline-none focus:ring-2 focus:ring-blue-600 transition"
-                placeholder={formData.role === "College" ? "College Admin Name" : "Basant Bhatt"}
+                placeholder={formData.role === "College" ? "College Admin Name" : "Full Name"}
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               />
