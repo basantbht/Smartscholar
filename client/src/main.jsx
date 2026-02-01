@@ -8,21 +8,27 @@ import { CollegeProvider } from "./context/CollegeContext";
 import { AdminProvider } from "./context/AdminContext";
 import { EventProvider } from "./context/EventContext";
 import { UserProvider } from "./context/UserContext";
+import { ScholarshipProvider } from "./context/ScholarshipContext";
+import { CourseProvider } from "./context/CourseContext";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <AuthProvider>
-        <AdminProvider>
-          <CollegeProvider>
+
+  <BrowserRouter>
+    <AuthProvider>
+      <AdminProvider>
+        <CollegeProvider>
           <UserProvider>
-          <EventProvider>
-            <App />
-          </EventProvider>
+            <EventProvider>
+              <ScholarshipProvider>
+                <CourseProvider>
+                  <App />
+                </CourseProvider>
+              </ScholarshipProvider>
+            </EventProvider>
           </UserProvider>
-          </CollegeProvider>
-        </AdminProvider>
-      </AuthProvider>
-    </BrowserRouter>
-  </React.StrictMode>
+        </CollegeProvider>
+      </AdminProvider>
+    </AuthProvider>
+  </BrowserRouter>
+
 );

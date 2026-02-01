@@ -2,9 +2,6 @@ import express from "express";
 import { isAuthenticated, isAuthorized } from "../middlewares/authMiddleware.js";
 import { uploadImage, handleUploadError, uploadDocument } from "../middlewares/upload.js";
 import {
-  listPublicPosts,
-  getPost,
-  applyToPost,
   listMyApplications,
   requestSession,
   listMySessions,
@@ -13,30 +10,6 @@ import {
 } from "../controllers/studentController.js";
 
 const router = express.Router();
-
-// Public post listing
-router.get(
-  "/posts",
-  isAuthenticated,
-  isAuthorized("Student"),
-  listPublicPosts
-);
-
-router.get(
-  "/posts/:postId",
-  isAuthenticated,
-  isAuthorized("Student"),
-  getPost
-);
-
-router.post(
-  "/posts/:postId/apply",
-  isAuthenticated,
-  isAuthorized("Student"),
-  uploadDocument.array("docs", 10),
-  handleUploadError,
-  applyToPost
-);
 
 router.get(
   "/applications",

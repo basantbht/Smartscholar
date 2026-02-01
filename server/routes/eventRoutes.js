@@ -11,7 +11,7 @@ import {
   getEventRegistrations,
   reviewEventRegistration,
   toggleEventStatus,
-} from "../controllers/collegeEventController.js";
+} from "../controllers/eventController.js";
 
 const router = express.Router();
 

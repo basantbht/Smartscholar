@@ -7,6 +7,7 @@ import { generateToken } from "../utils/generateToken.js";
 
 const emailRegex = /^\S+@\S+\.\S+$/;
 
+// register user
 export const register = asyncHandler(async (req, res, next) => {
   const { name, email, password, confirmPassword, role } = req.body;
 
@@ -66,7 +67,7 @@ export const register = asyncHandler(async (req, res, next) => {
   });
 });
 
-
+// login user
 export const login = asyncHandler(async (req, res, next) => {
   const { email, password, role } = req.body;
 
@@ -95,10 +96,7 @@ export const login = asyncHandler(async (req, res, next) => {
   generateToken(user, 200, "Logged in successfully", res);
 });
 
-
-/**
- * LOGOUT
- */
+// logout
 export const logout = asyncHandler(async (req, res) => {
   res
     .status(200)
@@ -112,9 +110,7 @@ export const logout = asyncHandler(async (req, res) => {
     });
 });
 
-/**
- * GET CURRENT USER
- */
+// get current user
 export const me = asyncHandler(async (req, res) => {
   res.status(200).json({
     success: true,
@@ -124,7 +120,7 @@ export const me = asyncHandler(async (req, res) => {
   });
 });
 
-
+// verify your email
 export const verifyEmail = asyncHandler(async (req, res, next) => {
   const { token } = req.query;
   if (!token) return next(new ErrorHandler("Missing token", 400));

@@ -67,11 +67,11 @@ const CollegeDashboard = () => {
         <div className="mt-8 grid md:grid-cols-2 gap-4">
           <Link
             className="p-6 rounded-xl border-2 border-gray-200 hover:border-blue-500 hover:bg-blue-50 transition-all group"
-            to="/college/posts"
+            to="/college/events"
           >
             <div className="text-2xl mb-2">📝</div>
             <h3 className="font-semibold text-lg text-gray-900 group-hover:text-blue-600">
-              Manage Posts
+              Manage Events
             </h3>
             <p className="text-gray-600 text-sm mt-1">
               Courses, Events, Hackathons, Scholarships

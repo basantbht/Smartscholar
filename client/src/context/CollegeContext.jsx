@@ -7,9 +7,9 @@ const CollegeContext = createContext(null);
 export const CollegeProvider = ({ children }) => {
   const [profile, setProfile] = useState(null);
   const [verification, setVerification] = useState(null);
-  const [posts, setPosts] = useState([]);
   const [applications, setApplications] = useState([]);
-  const [sessions, setSessions] = useState([]);
+  const [courses, setCourses] = useState([]);
+  const [allCourses, setAllCourses] = useState([]); // For all colleges courses
   const [loading, setLoading] = useState(false);
 
   // Fetch college profile
@@ -20,7 +20,7 @@ export const CollegeProvider = ({ children }) => {
       return res.data?.data?.user;
     } catch (error) {
       toast.error("Failed to fetch profile");
-      throw error;
+     console.log(error)
     }
   };
 
@@ -38,7 +38,7 @@ export const CollegeProvider = ({ children }) => {
       return res.data;
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to create profile");
-      throw error;
+      console.log(error)
     } finally {
       setLoading(false);
     }
@@ -58,7 +58,7 @@ export const CollegeProvider = ({ children }) => {
       return res.data;
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to update profile");
-      throw error;
+      console.log(error)
     } finally {
       setLoading(false);
     }
@@ -72,7 +72,7 @@ export const CollegeProvider = ({ children }) => {
       return res.data?.data;
     } catch (error) {
       toast.error("Failed to fetch verification status");
-      throw error;
+      console.log(error)
     }
   };
 
@@ -94,34 +94,6 @@ export const CollegeProvider = ({ children }) => {
     }
   };
 
-  // Fetch posts
-  const fetchPosts = async () => {
-    try {
-      const res = await api.get("/college/posts");
-      setPosts(res.data?.data?.posts || []);
-      return res.data?.data?.posts;
-    } catch (error) {
-      toast.error("Failed to fetch posts");
-      throw error;
-    }
-  };
-
-  // Create post
-  const createPost = async (data) => {
-    setLoading(true);
-    try {
-      const res = await api.post("/college/posts", data);
-      toast.success("Post created successfully");
-      await fetchPosts();
-      return res.data;
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to create post");
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  };
-
   // Fetch applications
   const fetchApplications = async () => {
     try {
@@ -130,7 +102,7 @@ export const CollegeProvider = ({ children }) => {
       return res.data?.data?.applications;
     } catch (error) {
       toast.error("Failed to fetch applications");
-      throw error;
+      console.log(error)
     }
   };
 
@@ -147,34 +119,116 @@ export const CollegeProvider = ({ children }) => {
       return res.data;
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to review application");
-      throw error;
+      console.log(error)
     } finally {
       setLoading(false);
     }
   };
 
-  // Fetch sessions
-  const fetchSessions = async () => {
+  // ==================== COLLEGE COURSE MANAGEMENT ====================
+
+  // Fetch all courses for the logged-in college
+  const fetchCourses = async () => {
+    setLoading(true);
     try {
-      const res = await api.get("/college/sessions");
-      setSessions(res.data?.data?.sessions || []);
-      return res.data?.data?.sessions;
+      const res = await api.get("/courses");
+      setCourses(res.data?.data?.courses || []);
+      return res.data?.data?.courses;
     } catch (error) {
-      toast.error("Failed to fetch sessions");
-      throw error;
+      toast.error("Failed to fetch courses");
+      console.log(error)
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Update session
-  const updateSession = async (sessionId, data) => {
+  // Create course
+  const createCourse = async (data) => {
     setLoading(true);
     try {
-      const res = await api.put(`/college/sessions/${sessionId}`, data);
-      toast.success("Session updated successfully");
-      await fetchSessions();
+      const res = await api.post("/courses", data);
+      toast.success("Course created successfully");
+      await fetchCourses();
       return res.data;
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to update session");
+      toast.error(error.response?.data?.message || "Failed to create course");
+      console.log(error)
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Update course
+  const updateCourse = async (courseId, data) => {
+    setLoading(true);
+    try {
+      const res = await api.put(`/courses/${courseId}`, data);
+      toast.success("Course updated successfully");
+      await fetchCourses();
+      return res.data;
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to update course");
+      console.log(error)
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Delete course
+  const deleteCourse = async (courseId) => {
+    setLoading(true);
+    try {
+      const res = await api.delete(`/courses/${courseId}`);
+      toast.success("Course deleted successfully");
+      await fetchCourses();
+      return res.data;
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to delete course");
+      console.log(error)
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Get course by ID
+  const getCourseById = async (courseId) => {
+    setLoading(true);
+    try {
+      const res = await api.get(`/courses/${courseId}`);
+      return res.data?.data?.course;
+    } catch (error) {
+      toast.error(error.response?.data?.message  || "Failed to fetch course");
+      console.log(error)
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ==================== STUDENT/PUBLIC COURSE ACCESS ====================
+
+  // Get all courses from all colleges (matches backend controller name)
+  const getAllCollegesCourses = async () => {
+    setLoading(true);
+    try {
+      const res = await api.get("/courses/all");
+      setAllCourses(res.data?.data?.courses || []);
+      return res.data?.data;
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to fetch courses");
+      console.log(error)
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Get courses by specific college ID
+  const getCoursesByCollegeId = async (collegeId) => {
+    setLoading(true);
+    try {
+      const res = await api.get(`/courses/colleges/${collegeId}/courses`);
+      return res.data?.data;
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to fetch college courses");
       throw error;
     } finally {
       setLoading(false);
@@ -185,23 +239,30 @@ export const CollegeProvider = ({ children }) => {
     () => ({
       profile,
       verification,
-      posts,
       applications,
-      sessions,
+      courses,
+      allCourses,
       loading,
       fetchProfile,
       createProfile,
       updateProfile,
       fetchVerification,
       submitVerification,
-      fetchPosts,
-      createPost,
       fetchApplications,
       reviewApplication,
-      fetchSessions,
-      updateSession,
+
+      // Course methods
+      fetchCourses,
+      createCourse,
+      updateCourse,
+      deleteCourse,
+      getCourseById,
+
+      // Public course methods
+      getAllCollegesCourses,
+      getCoursesByCollegeId,
     }),
-    [profile, verification, posts, applications, sessions, loading]
+    [profile, verification, applications, courses, allCourses, loading]
   );
 
   return <CollegeContext.Provider value={value}>{children}</CollegeContext.Provider>;
