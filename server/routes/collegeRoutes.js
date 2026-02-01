@@ -7,13 +7,23 @@ import {
   getMyProfile,
   submitVerificationDocs,
   getMyVerificationStatus,
-  createPost,
-  getMyPosts,
   getMyApplications,
   reviewApplication,
   getSessionRequests,
   updateSessionRequest,
 } from "../controllers/collegeController.js";
+
+import {
+  createScholarship,
+  getMyScholarships,
+  getScholarshipById,
+  updateScholarship,
+  deleteScholarship,
+  getScholarshipsByCollegeId,
+  getAllActiveScholarships,
+  getScholarshipStats,
+  toggleScholarshipStatus,
+} from "../controllers/scholarshipController.js";
 
 const router = express.Router();
 
@@ -55,24 +65,9 @@ router.post(
   "/verification/submit", 
   isAuthenticated, 
   isAuthorized("College"), 
-  uploadDocument.array("docs", 10),  // ✅ Changed from uploadDocuments to uploadDocument
+  uploadDocument.array("docs", 10),
   handleUploadError, 
   submitVerificationDocs
-);
-
-// Post routes
-router.post(
-  "/posts", 
-  isAuthenticated, 
-  isAuthorized("College"), 
-  createPost
-);
-
-router.get(
-  "/posts", 
-  isAuthenticated, 
-  isAuthorized("College"), 
-  getMyPosts
 );
 
 // Application routes
@@ -104,5 +99,59 @@ router.put(
   isAuthorized("College"), 
   updateSessionRequest
 );
+
+// Scholarship routes (College authenticated)
+router.post(
+  "/scholarships",
+  isAuthenticated,
+  isAuthorized("College"),
+  createScholarship
+);
+
+router.get(
+  "/scholarships",
+  isAuthenticated,
+  isAuthorized("College"),
+  getMyScholarships
+);
+
+router.get(
+  "/scholarships/stats",
+  isAuthenticated,
+  isAuthorized("College"),
+  getScholarshipStats
+);
+
+router.get(
+  "/scholarships/:scholarshipId",
+  isAuthenticated,
+  isAuthorized("College","Student"),
+  getScholarshipById
+);
+
+router.put(
+  "/scholarships/:scholarshipId",
+  isAuthenticated,
+  isAuthorized("College"),
+  updateScholarship
+);
+
+router.patch(
+  "/scholarships/:scholarshipId/toggle-status",
+  isAuthenticated,
+  isAuthorized("College"),
+  toggleScholarshipStatus
+);
+
+router.delete(
+  "/scholarships/:scholarshipId",
+  isAuthenticated,
+  isAuthorized("College"),
+  deleteScholarship
+);
+
+// Public routes (for students/visitors)
+router.get("/colleges/:collegeId/scholarships", getScholarshipsByCollegeId);
+router.get("/scholarships/public/all", getAllActiveScholarships);
 
 export default router;

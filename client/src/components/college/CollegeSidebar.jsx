@@ -90,8 +90,10 @@ const CollegeSidebar = ({ open, onClose }) => {
               // Lock some pages until approved
               const locked =
                 !isApproved &&
-                (it.to.startsWith("/college/posts") ||
-                  it.to.startsWith("/college/applications") ||
+                (it.to.startsWith("/college/applications") ||
+                  it.to.startsWith("/college/courses") ||
+                  it.to.startsWith("/college/scholarships") ||
+                  it.to.startsWith("/college/events") ||  
                   it.to.startsWith("/college/sessions"));
 
               return (

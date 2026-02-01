@@ -14,8 +14,9 @@ import authRoutes from "./routes/authRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import collegeRoutes from "./routes/collegeRoutes.js";
 import studentRoutes from "./routes/studentRoutes.js";
-import collegeEventRoutes from "./routes/collegeEventRoutes.js";
+import eventRoutes from "./routes/eventRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
+import courseRoutes from "./routes/courseRoutes.js";
 
 config();
 
@@ -47,8 +48,9 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/college", collegeRoutes);
 app.use("/api/v1/student", studentRoutes);
-app.use("/api/v1/events", collegeEventRoutes);
+app.use("/api/v1/events", eventRoutes);
 app.use("/api/v1/notifications", notificationRoutes);
+app.use("/api/v1/courses", courseRoutes);
 
 app.use(errorMiddleware);
 

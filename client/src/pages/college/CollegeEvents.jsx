@@ -35,56 +35,6 @@ const CollegeEvents = () => {
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterType, setFilterType] = useState('all');
 
-  const [formData, setFormData] = useState({
-    // Basic Information
-    title: '',
-    description: '',
-
-    // Event Type & Category
-    eventType: 'hackathon',
-    category: [],
-
-    // Event Dates
-    startDate: '',
-    endDate: '',
-    registrationDeadline: '',
-
-    // Location
-    venue: '',
-    address: '',
-    isOnline: false,
-    onlineLink: '',
-
-    // Organizer
-    organizer: '',
-    organizerEmail: '',
-    organizerPhone: '',
-
-    // Registration
-    registrationFee: 0,
-    maxParticipants: '',
-    teamSizeMin: 1,
-    teamSizeMax: 1,
-
-    // Eligibility
-    eligibility: '',
-
-    // Images (base64)
-    banner: '',
-    thumbnail: '',
-
-    // Additional Info
-    prizes: '',
-    tags: [],
-
-    // Status
-    status: 'published',
-
-    // Links
-    website: '',
-    registrationLink: '',
-  });
-
   const [formErrors, setFormErrors] = useState({});
 
   const fileToBase64 = (file) =>
@@ -161,48 +111,151 @@ const CollegeEvents = () => {
     e.preventDefault();
     if (!validateForm()) return;
 
-    const payload = {
+    // Create a plain object with all the data
+    const eventPayload = {
+      // Basic Information
       title: formData.title,
       description: formData.description,
+
+      // Event Type & Category
       eventType: formData.eventType,
       category: formData.category,
+
+      // Event Dates
       startDate: formData.startDate,
       endDate: formData.endDate,
       registrationDeadline: formData.registrationDeadline,
+
+      // Location
       venue: formData.venue,
       address: formData.address || null,
       isOnline: formData.isOnline,
       onlineLink: formData.onlineLink || null,
+
+      // Organizer
       organizer: formData.organizer,
       organizerEmail: formData.organizerEmail || null,
       organizerPhone: formData.organizerPhone || null,
+
+      // Registration
       registrationFee: Number(formData.registrationFee) || 0,
       maxParticipants: formData.maxParticipants ? Number(formData.maxParticipants) : null,
       teamSize: {
         min: Number(formData.teamSizeMin) || 1,
         max: Number(formData.teamSizeMax) || 1,
       },
+
+      // Eligibility
       eligibility: formData.eligibility || null,
-      banner: formData.banner || null,
-      thumbnail: formData.thumbnail || null,
+
+      // Additional Info
       prizes: formData.prizes || null,
       tags: formData.tags,
+
+      // Status
       status: formData.status,
+
+      // Links
       website: formData.website || null,
       registrationLink: formData.registrationLink || null,
     };
 
+    // Add banner and thumbnail files if they exist
+    if (formData.bannerFile instanceof File) {
+      eventPayload.banner = formData.bannerFile;
+    }
+    if (formData.thumbnailFile instanceof File) {
+      eventPayload.thumbnail = formData.thumbnailFile;
+    }
+
     try {
       if (editingEvent) {
-        await updateEvent(editingEvent._id, payload);
+        await updateEvent(editingEvent._id, eventPayload);
       } else {
-        await createEvent(payload);
+        await createEvent(eventPayload);
       }
       handleCloseModal();
     } catch (error) {
       console.error('Failed to save event:', error);
     }
   };
+
+  // Update your formData state to include file fields
+  const [formData, setFormData] = useState({
+    // Basic Information
+    title: '',
+    description: '',
+
+    // Event Type & Category
+    eventType: 'hackathon',
+    category: [],
+
+    // Event Dates
+    startDate: '',
+    endDate: '',
+    registrationDeadline: '',
+
+    // Location
+    venue: '',
+    address: '',
+    isOnline: false,
+    onlineLink: '',
+
+    // Organizer
+    organizer: '',
+    organizerEmail: '',
+    organizerPhone: '',
+
+    // Registration
+    registrationFee: 0,
+    maxParticipants: '',
+    teamSizeMin: 1,
+    teamSizeMax: 1,
+
+    // Eligibility
+    eligibility: '',
+
+    // Files (NEW - store actual File objects)
+    bannerFile: null,
+    bannerPreview: '',
+    thumbnailFile: null,
+    thumbnailPreview: '',
+
+    // Additional Info
+    prizes: '',
+    tags: [],
+
+    // Status
+    status: 'published',
+
+    // Links
+    website: '',
+    registrationLink: '',
+  });
+
+  // Add these handler functions
+  const handleBannerChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setFormData(prev => ({
+      ...prev,
+      bannerFile: file,
+      bannerPreview: URL.createObjectURL(file)
+    }));
+  };
+
+  const handleThumbnailChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setFormData(prev => ({
+      ...prev,
+      thumbnailFile: file,
+      thumbnailPreview: URL.createObjectURL(file)
+    }));
+  };
+
 
   const handleDelete = async (eventId) => {
     if (!window.confirm('Are you sure you want to delete this event?')) return;
@@ -213,74 +266,163 @@ const CollegeEvents = () => {
     }
   };
 
-  const handleEdit = (event) => {
-    setEditingEvent(event);
-    setFormData({
-      title: event.title,
-      description: event.description,
-      eventType: event.eventType || 'hackathon',
-      category: event.category || [],
-      startDate: event.startDate ? new Date(event.startDate).toISOString().slice(0, 16) : '',
-      endDate: event.endDate ? new Date(event.endDate).toISOString().slice(0, 16) : '',
-      registrationDeadline: event.registrationDeadline
-        ? new Date(event.registrationDeadline).toISOString().slice(0, 16)
-        : '',
-      venue: event.venue || '',
-      address: event.address || '',
-      isOnline: event.isOnline || false,
-      onlineLink: event.onlineLink || '',
-      organizer: event.organizer || '',
-      organizerEmail: event.organizerEmail || '',
-      organizerPhone: event.organizerPhone || '',
-      registrationFee: event.registrationFee || 0,
-      maxParticipants: event.maxParticipants || '',
-      teamSizeMin: event.teamSize?.min || 1,
-      teamSizeMax: event.teamSize?.max || 1,
-      eligibility: event.eligibility || '',
-      banner: event.banner || '',
-      thumbnail: event.thumbnail || '',
-      prizes: event.prizes || '',
-      tags: event.tags || [],
-      status: event.status,
-      website: event.website || '',
-      registrationLink: event.registrationLink || '',
-    });
-    setShowModal(true);
-  };
+  // const handleEdit = (event) => {
+  //   setEditingEvent(event);
+  //   setFormData({
+  //     title: event.title,
+  //     description: event.description,
+  //     eventType: event.eventType || 'hackathon',
+  //     category: event.category || [],
+  //     startDate: event.startDate ? new Date(event.startDate).toISOString().slice(0, 16) : '',
+  //     endDate: event.endDate ? new Date(event.endDate).toISOString().slice(0, 16) : '',
+  //     registrationDeadline: event.registrationDeadline
+  //       ? new Date(event.registrationDeadline).toISOString().slice(0, 16)
+  //       : '',
+  //     venue: event.venue || '',
+  //     address: event.address || '',
+  //     isOnline: event.isOnline || false,
+  //     onlineLink: event.onlineLink || '',
+  //     organizer: event.organizer || '',
+  //     organizerEmail: event.organizerEmail || '',
+  //     organizerPhone: event.organizerPhone || '',
+  //     registrationFee: event.registrationFee || 0,
+  //     maxParticipants: event.maxParticipants || '',
+  //     teamSizeMin: event.teamSize?.min || 1,
+  //     teamSizeMax: event.teamSize?.max || 1,
+  //     eligibility: event.eligibility || '',
+  //     banner: event.banner || '',
+  //     thumbnail: event.thumbnail || '',
+  //     prizes: event.prizes || '',
+  //     tags: event.tags || [],
+  //     status: event.status,
+  //     website: event.website || '',
+  //     registrationLink: event.registrationLink || '',
+  //   });
+  //   setShowModal(true);
+  // };
 
-  const handleCloseModal = () => {
-    setShowModal(false);
-    setEditingEvent(null);
-    setFormData({
-      title: '',
-      description: '',
-      eventType: 'hackathon',
-      category: [],
-      startDate: '',
-      endDate: '',
-      registrationDeadline: '',
-      venue: '',
-      address: '',
-      isOnline: false,
-      onlineLink: '',
-      organizer: '',
-      organizerEmail: '',
-      organizerPhone: '',
-      registrationFee: 0,
-      maxParticipants: '',
-      teamSizeMin: 1,
-      teamSizeMax: 1,
-      eligibility: '',
-      banner: '',
-      thumbnail: '',
-      prizes: '',
-      tags: [],
-      status: 'published',
-      website: '',
-      registrationLink: '',
-    });
-    setFormErrors({});
-  };
+  
+
+  // const handleCloseModal = () => {
+  //   setShowModal(false);
+  //   setEditingEvent(null);
+  //   setFormData({
+  //     title: '',
+  //     description: '',
+  //     eventType: 'hackathon',
+  //     category: [],
+  //     startDate: '',
+  //     endDate: '',
+  //     registrationDeadline: '',
+  //     venue: '',
+  //     address: '',
+  //     isOnline: false,
+  //     onlineLink: '',
+  //     organizer: '',
+  //     organizerEmail: '',
+  //     organizerPhone: '',
+  //     registrationFee: 0,
+  //     maxParticipants: '',
+  //     teamSizeMin: 1,
+  //     teamSizeMax: 1,
+  //     eligibility: '',
+  //     banner: '',
+  //     thumbnail: '',
+  //     prizes: '',
+  //     tags: [],
+  //     status: 'published',
+  //     website: '',
+  //     registrationLink: '',
+  //   });
+  //   setFormErrors({});
+  // };
+
+  // Replace your handleEdit function in CollegeEvents component
+
+const handleEdit = (event) => {
+  setEditingEvent(event);
+  setFormData({
+    title: event.title,
+    description: event.description,
+    eventType: event.eventType || 'hackathon',
+    category: event.category || [],
+    startDate: event.startDate ? new Date(event.startDate).toISOString().slice(0, 16) : '',
+    endDate: event.endDate ? new Date(event.endDate).toISOString().slice(0, 16) : '',
+    registrationDeadline: event.registrationDeadline
+      ? new Date(event.registrationDeadline).toISOString().slice(0, 16)
+      : '',
+    venue: event.venue || '',
+    address: event.address || '',
+    isOnline: event.isOnline || false,
+    onlineLink: event.onlineLink || '',
+    organizer: event.organizer || '',
+    organizerEmail: event.organizerEmail || '',
+    organizerPhone: event.organizerPhone || '',
+    registrationFee: event.registrationFee || 0,
+    maxParticipants: event.maxParticipants || '',
+    teamSizeMin: event.teamSize?.min || 1,
+    teamSizeMax: event.teamSize?.max || 1,
+    eligibility: event.eligibility || '',
+    
+    // Don't set file fields when editing - they should be null
+    bannerFile: null,
+    bannerPreview: '',
+    thumbnailFile: null,
+    thumbnailPreview: '',
+    
+    prizes: event.prizes || '',
+    tags: event.tags || [],
+    status: event.status,
+    website: event.website || '',
+    registrationLink: event.registrationLink || '',
+  });
+  setShowModal(true);
+};
+
+// Also update handleCloseModal to clear file fields
+const handleCloseModal = () => {
+  setShowModal(false);
+  setEditingEvent(null);
+  setFormData({
+    title: '',
+    description: '',
+    eventType: 'hackathon',
+    category: [],
+    startDate: '',
+    endDate: '',
+    registrationDeadline: '',
+    venue: '',
+    address: '',
+    isOnline: false,
+    onlineLink: '',
+    organizer: '',
+    organizerEmail: '',
+    organizerPhone: '',
+    registrationFee: 0,
+    maxParticipants: '',
+    teamSizeMin: 1,
+    teamSizeMax: 1,
+    eligibility: '',
+    bannerFile: null,
+    bannerPreview: '',
+    thumbnailFile: null,
+    thumbnailPreview: '',
+    prizes: '',
+    tags: [],
+    status: 'published',
+    website: '',
+    registrationLink: '',
+  });
+  setFormErrors({});
+  
+  // Clean up preview URLs to prevent memory leaks
+  if (formData.bannerPreview) {
+    URL.revokeObjectURL(formData.bannerPreview);
+  }
+  if (formData.thumbnailPreview) {
+    URL.revokeObjectURL(formData.thumbnailPreview);
+  }
+};
 
   const filteredEvents = useMemo(() => {
     return (events || []).filter((event) => {
@@ -486,9 +628,8 @@ const CollegeEvents = () => {
                 return (
                   <div
                     key={event._id}
-                    className={`px-5 py-4 transition ${
-                      idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'
-                    } hover:bg-blue-50/30`}
+                    className={`px-5 py-4 transition ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'
+                      } hover:bg-blue-50/30`}
                   >
                     <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
                       {/* Event */}
@@ -498,10 +639,10 @@ const CollegeEvents = () => {
                             <img
                               src={event.thumbnail}
                               alt={event.title}
-                              className="w-14 h-14 rounded-lg object-cover border border-gray-200 flex-shrink-0"
+                              className="w-14 h-14 rounded-lg object-cover border border-gray-200 shrink-0"
                             />
                           ) : (
-                            <div className="w-14 h-14 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center flex-shrink-0">
+                            <div className="w-14 h-14 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center shrink-0">
                               <Calendar className="w-6 h-6 text-gray-400" />
                             </div>
                           )}
@@ -755,9 +896,8 @@ const CollegeEvents = () => {
                     type="text"
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                      formErrors.title ? 'border-red-500' : 'border-gray-300'
-                    }`}
+                    className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${formErrors.title ? 'border-red-500' : 'border-gray-300'
+                      }`}
                     placeholder="Enter event title"
                     maxLength={200}
                     disabled={isSubmitting}
@@ -775,9 +915,8 @@ const CollegeEvents = () => {
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     rows={4}
-                    className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                      formErrors.description ? 'border-red-500' : 'border-gray-300'
-                    }`}
+                    className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${formErrors.description ? 'border-red-500' : 'border-gray-300'
+                      }`}
                     placeholder="Describe the event in detail"
                     disabled={isSubmitting}
                   />
@@ -838,9 +977,8 @@ const CollegeEvents = () => {
                       type="datetime-local"
                       value={formData.startDate}
                       onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                      className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                        formErrors.startDate ? 'border-red-500' : 'border-gray-300'
-                      }`}
+                      className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${formErrors.startDate ? 'border-red-500' : 'border-gray-300'
+                        }`}
                       disabled={isSubmitting}
                     />
                     {formErrors.startDate && (
@@ -856,9 +994,8 @@ const CollegeEvents = () => {
                       type="datetime-local"
                       value={formData.endDate}
                       onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                      className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                        formErrors.endDate ? 'border-red-500' : 'border-gray-300'
-                      }`}
+                      className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${formErrors.endDate ? 'border-red-500' : 'border-gray-300'
+                        }`}
                       disabled={isSubmitting}
                     />
                     {formErrors.endDate && (
@@ -876,9 +1013,8 @@ const CollegeEvents = () => {
                       onChange={(e) =>
                         setFormData({ ...formData, registrationDeadline: e.target.value })
                       }
-                      className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                        formErrors.registrationDeadline ? 'border-red-500' : 'border-gray-300'
-                      }`}
+                      className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${formErrors.registrationDeadline ? 'border-red-500' : 'border-gray-300'
+                        }`}
                       disabled={isSubmitting}
                     />
                     {formErrors.registrationDeadline && (
@@ -917,9 +1053,8 @@ const CollegeEvents = () => {
                       type="text"
                       value={formData.venue}
                       onChange={(e) => setFormData({ ...formData, venue: e.target.value })}
-                      className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                        formErrors.venue ? 'border-red-500' : 'border-gray-300'
-                      }`}
+                      className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${formErrors.venue ? 'border-red-500' : 'border-gray-300'
+                        }`}
                       placeholder="e.g., Main Auditorium"
                       disabled={isSubmitting}
                     />
@@ -950,9 +1085,8 @@ const CollegeEvents = () => {
                       type="url"
                       value={formData.onlineLink}
                       onChange={(e) => setFormData({ ...formData, onlineLink: e.target.value })}
-                      className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                        formErrors.onlineLink ? 'border-red-500' : 'border-gray-300'
-                      }`}
+                      className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${formErrors.onlineLink ? 'border-red-500' : 'border-gray-300'
+                        }`}
                       placeholder="https://zoom.us/j/..."
                       disabled={isSubmitting}
                     />
@@ -978,9 +1112,8 @@ const CollegeEvents = () => {
                       type="text"
                       value={formData.organizer}
                       onChange={(e) => setFormData({ ...formData, organizer: e.target.value })}
-                      className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                        formErrors.organizer ? 'border-red-500' : 'border-gray-300'
-                      }`}
+                      className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${formErrors.organizer ? 'border-red-500' : 'border-gray-300'
+                        }`}
                       placeholder="Organization/Club name"
                       disabled={isSubmitting}
                     />
@@ -997,9 +1130,8 @@ const CollegeEvents = () => {
                       type="email"
                       value={formData.organizerEmail}
                       onChange={(e) => setFormData({ ...formData, organizerEmail: e.target.value })}
-                      className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                        formErrors.organizerEmail ? 'border-red-500' : 'border-gray-300'
-                      }`}
+                      className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${formErrors.organizerEmail ? 'border-red-500' : 'border-gray-300'
+                        }`}
                       placeholder="contact@example.com"
                       disabled={isSubmitting}
                     />
@@ -1089,9 +1221,8 @@ const CollegeEvents = () => {
                       min="1"
                       value={formData.teamSizeMax}
                       onChange={(e) => setFormData({ ...formData, teamSizeMax: e.target.value })}
-                      className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                        formErrors.teamSizeMax ? 'border-red-500' : 'border-gray-300'
-                      }`}
+                      className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${formErrors.teamSizeMax ? 'border-red-500' : 'border-gray-300'
+                        }`}
                       disabled={isSubmitting}
                     />
                     {formErrors.teamSizeMax && (
@@ -1217,7 +1348,7 @@ const CollegeEvents = () => {
                 </div>
 
                 {/* Image inputs */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Banner Image
@@ -1260,6 +1391,97 @@ const CollegeEvents = () => {
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       disabled={isSubmitting}
                     />
+                  </div>
+                </div> */}
+
+                {/* Image inputs - UPDATED VERSION */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Banner Image
+                    </label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleBannerChange}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      disabled={isSubmitting}
+                    />
+                    {formData.bannerPreview && (
+                      <div className="mt-2 relative">
+                        <img
+                          src={formData.bannerPreview}
+                          alt="Banner preview"
+                          className="h-24 w-full object-cover rounded border"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setFormData(prev => ({
+                            ...prev,
+                            bannerFile: null,
+                            bannerPreview: ''
+                          }))}
+                          className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
+                    {/* Show existing banner if editing and no new file selected */}
+                    {editingEvent && !formData.bannerPreview && editingEvent.banner && (
+                      <div className="mt-2">
+                        <img
+                          src={editingEvent.banner}
+                          alt="Current banner"
+                          className="h-24 w-full object-cover rounded border opacity-50"
+                        />
+                        <p className="text-xs text-gray-500 mt-1">Current banner (upload new to replace)</p>
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Thumbnail Image
+                    </label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleThumbnailChange}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      disabled={isSubmitting}
+                    />
+                    {formData.thumbnailPreview && (
+                      <div className="mt-2 relative inline-block">
+                        <img
+                          src={formData.thumbnailPreview}
+                          alt="Thumbnail preview"
+                          className="h-24 w-24 object-cover rounded border"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setFormData(prev => ({
+                            ...prev,
+                            thumbnailFile: null,
+                            thumbnailPreview: ''
+                          }))}
+                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
+                    {/* Show existing thumbnail if editing and no new file selected */}
+                    {editingEvent && !formData.thumbnailPreview && editingEvent.thumbnail && (
+                      <div className="mt-2">
+                        <img
+                          src={editingEvent.thumbnail}
+                          alt="Current thumbnail"
+                          className="h-24 w-24 object-cover rounded border opacity-50"
+                        />
+                        <p className="text-xs text-gray-500 mt-1">Current thumbnail</p>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

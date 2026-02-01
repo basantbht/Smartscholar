@@ -3,6 +3,7 @@ import { asyncHandler } from "../middlewares/asyncHandler.js";
 import ErrorHandler from "../middlewares/error.js";
 import { Event } from "../models/event.js";
 import { EventRegistration } from "../models/eventRegistration.js";
+import { User } from "../models/user.js";
 import { uploadToCloudinary, deleteFromCloudinary, getPublicIdFromUrl } from "../utils/cloudinary.js";
 
 // Helper middleware
@@ -12,38 +13,182 @@ const ensureApprovedCollege = (req, next) => {
   }
 };
 
-// Create Event
-export const createEvent = asyncHandler(async (req, res, next) => {
+export const createEvent = asyncHandler(async (req,   res, next) => {
   ensureApprovedCollege(req, next);
 
+  // DEBUG: Log what we're receiving
+  console.log("=== CREATE EVENT DEBUG ===");
+  console.log("req.body:", req.body);
+  console.log("req.files:", req.files);
+  console.log("req.files.banner:", req.files?.banner);
+  console.log("req.files.thumbnail:", req.files?.thumbnail);
+
+  // Parse JSON fields if they were stringified
+  let parsedBody = { ...req.body };
+  
+  // Parse teamSize if it's a string
+  if (typeof req.body.teamSize === 'string') {
+    try {
+      parsedBody.teamSize = JSON.parse(req.body.teamSize);
+    } catch (e) {
+      console.error('Failed to parse teamSize:', e);
+    }
+  }
+
+  // Parse category if it's a string
+  if (typeof req.body.category === 'string') {
+    try {
+      parsedBody.category = JSON.parse(req.body.category);
+    } catch (e) {
+      console.error('Failed to parse category:', e);
+    }
+  }
+
+  // Parse tags if it's a string
+  if (typeof req.body.tags === 'string') {
+    try {
+      parsedBody.tags = JSON.parse(req.body.tags);
+    } catch (e) {
+      console.error('Failed to parse tags:', e);
+    }
+  }
+
   const eventData = {
-    ...req.body,
+    ...parsedBody,
     createdByCollege: req.user._id,
   };
 
   // Handle banner image upload
-  if (req.files?.banner) {
+  if (req.files?.banner?.[0]) {
+    console.log("Uploading banner:", req.files.banner[0].path);
     const bannerResult = await uploadToCloudinary(
       req.files.banner[0].path,
       "event_banners"
     );
     eventData.banner = bannerResult.url;
+    console.log("Banner uploaded:", bannerResult.url);
+  } else {
+    console.log("No banner file received");
   }
 
   // Handle thumbnail upload
-  if (req.files?.thumbnail) {
+  if (req.files?.thumbnail?.[0]) {
+    console.log("Uploading thumbnail:", req.files.thumbnail[0].path);
     const thumbnailResult = await uploadToCloudinary(
       req.files.thumbnail[0].path,
       "event_thumbnails"
     );
     eventData.thumbnail = thumbnailResult.url;
+    console.log("Thumbnail uploaded:", thumbnailResult.url);
+  } else {
+    console.log("No thumbnail file received");
   }
 
   const event = await Event.create(eventData);
 
+   // ✅ LINK EVENT TO COLLEGE USER (so populate works)
+  await User.findByIdAndUpdate(
+    req.user._id,
+    { $addToSet: { "collegeProfile.events": event._id } },
+    { new: true }
+  );
+
   res.status(201).json({
     success: true,
     message: "Event created successfully",
+    data: { event },
+  });
+});
+
+// Updated updateEvent controller with debugging
+export const updateEvent = asyncHandler(async (req, res, next) => {
+  ensureApprovedCollege(req, next);
+
+  console.log("=== UPDATE EVENT DEBUG ===");
+  console.log("req.body:", req.body);
+  console.log("req.files:", req.files);
+
+  const { eventId } = req.params;
+
+  const event = await Event.findById(eventId);
+
+  if (!event) {
+    return next(new ErrorHandler("Event not found", 404));
+  }
+
+  if (event.createdByCollege.toString() !== req.user._id.toString()) {
+    return next(new ErrorHandler("Not authorized to update this event", 403));
+  }
+
+  // Parse JSON fields if they were stringified
+  let parsedBody = { ...req.body };
+  
+  if (typeof req.body.teamSize === 'string') {
+    try {
+      parsedBody.teamSize = JSON.parse(req.body.teamSize);
+    } catch (e) {
+      console.error('Failed to parse teamSize:', e);
+    }
+  }
+
+  if (typeof req.body.category === 'string') {
+    try {
+      parsedBody.category = JSON.parse(req.body.category);
+    } catch (e) {
+      console.error('Failed to parse category:', e);
+    }
+  }
+
+  if (typeof req.body.tags === 'string') {
+    try {
+      parsedBody.tags = JSON.parse(req.body.tags);
+    } catch (e) {
+      console.error('Failed to parse tags:', e);
+    }
+  }
+
+  // Handle banner upload
+  if (req.files?.banner?.[0]) {
+    console.log("New banner file detected");
+    if (event.banner) {
+      const publicId = getPublicIdFromUrl(event.banner);
+      if (publicId) await deleteFromCloudinary(publicId);
+    }
+    const bannerResult = await uploadToCloudinary(
+      req.files.banner[0].path,
+      "event_banners"
+    );
+    parsedBody.banner = bannerResult.url;
+    console.log("Banner updated:", bannerResult.url);
+  }
+
+  // Handle thumbnail upload
+  if (req.files?.thumbnail?.[0]) {
+    console.log("New thumbnail file detected");
+    if (event.thumbnail) {
+      const publicId = getPublicIdFromUrl(event.thumbnail);
+      if (publicId) await deleteFromCloudinary(publicId);
+    }
+    const thumbnailResult = await uploadToCloudinary(
+      req.files.thumbnail[0].path,
+      "event_thumbnails"
+    );
+    parsedBody.thumbnail = thumbnailResult.url;
+    console.log("Thumbnail updated:", thumbnailResult.url);
+  }
+
+  Object.assign(event, parsedBody);
+  await event.save();
+
+  await User.findByIdAndUpdate(
+    req.user._id,
+    { $addToSet: { "collegeProfile.events": event._id } },
+    { new: true }
+  );
+
+  res.status(200).json({
+    success: true,
+    message: "Event updated successfully",
     data: { event },
   });
 });
@@ -103,58 +248,6 @@ export const getEventById = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    data: { event },
-  });
-});
-
-// Update Event
-export const updateEvent = asyncHandler(async (req, res, next) => {
-  ensureApprovedCollege(req, next);
-console.log(req.files)
-  const { eventId } = req.params;
-
-  const event = await Event.findById(eventId);
-
-  if (!event) {
-    return next(new ErrorHandler("Event not found", 404));
-  }
-
-  if (event.createdByCollege.toString() !== req.user._id.toString()) {
-    return next(new ErrorHandler("Not authorized to update this event", 403));
-  }
-
-  // Handle banner upload
-  if (req.files?.banner) {
-    if (event.banner) {
-      const publicId = getPublicIdFromUrl(event.banner);
-      if (publicId) await deleteFromCloudinary(publicId);
-    }
-    const bannerResult = await uploadToCloudinary(
-      req.files.banner[0].path,
-      "event_banners"
-    );
-    req.body.banner = bannerResult.url;
-  }
-
-  // Handle thumbnail upload
-  if (req.files?.thumbnail) {
-    if (event.thumbnail) {
-      const publicId = getPublicIdFromUrl(event.thumbnail);
-      if (publicId) await deleteFromCloudinary(publicId);
-    }
-    const thumbnailResult = await uploadToCloudinary(
-      req.files.thumbnail[0].path,
-      "event_thumbnails"
-    );
-    req.body.thumbnail = thumbnailResult.url;
-  }
-
-  Object.assign(event, req.body);
-  await event.save();
-
-  res.status(200).json({
-    success: true,
-    message: "Event updated successfully",
     data: { event },
   });
 });

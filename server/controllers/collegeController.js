@@ -2,9 +2,9 @@ import { asyncHandler } from "../middlewares/asyncHandler.js";
 import ErrorHandler from "../middlewares/error.js";
 import { User } from "../models/user.js";
 import { CollegeVerification } from "../models/collegeVerification.js";
-import { Post } from "../models/post.js";
 import { Application } from "../models/application.js";
 import { SessionBooking } from "../models/sessionBooking.js";
+import { Course } from "../models/course.js";
 import { notifyUser } from "../services/notificationServices.js";
 import { v2 as cloudinary } from "cloudinary";
 import { uploadToCloudinary, deleteFromCloudinary, getPublicIdFromUrl } from "../utils/cloudinary.js";
@@ -280,59 +280,6 @@ export const getMyVerificationStatus = asyncHandler(async (req, res) => {
   });
 });
 
-// Create post
-export const createPost = asyncHandler(async (req, res, next) => {
-  ensureApprovedCollege(req, next);
-
-  const {
-    postType,
-    title,
-    description,
-    startDate,
-    endDate,
-    deadline,
-    location,
-    eligibility,
-    requiredDocs,
-    status,
-  } = req.body;
-
-  if (!postType || !title || !description) {
-    return next(
-      new ErrorHandler("postType, title, description are required", 400)
-    );
-  }
-
-  const post = await Post.create({
-    createdByCollege: req.user._id,
-    postType,
-    title,
-    description,
-    startDate: startDate ? new Date(startDate) : null,
-    endDate: endDate ? new Date(endDate) : null,
-    deadline: deadline ? new Date(deadline) : null,
-    location: location || null,
-    eligibility: eligibility || null,
-    requiredDocs: Array.isArray(requiredDocs) ? requiredDocs : [],
-    status: status || "published",
-  });
-
-  res.status(201).json({ 
-    success: true, 
-    message: "Post created", 
-    data: { post } 
-  });
-});
-
-// Get college's posts
-export const getMyPosts = asyncHandler(async (req, res) => {
-  const posts = await Post.find({ createdByCollege: req.user._id })
-    .sort({ createdAt: -1 })
-    .lean();
-
-  res.status(200).json({ success: true, data: { posts } });
-});
-
 // Get applications
 export const getMyApplications = asyncHandler(async (req, res, next) => {
   ensureApprovedCollege(req, next);
@@ -447,3 +394,4 @@ export const updateSessionRequest = asyncHandler(async (req, res, next) => {
     data: { session } 
   });
 });
+

@@ -5,13 +5,11 @@ import "react-toastify/dist/ReactToastify.css";
 import ChatBot from "./components/ChatBot";
 import Footer from "./components/Footer";
 
-import Home from "./pages/Student/Home";
-import Universities from "./pages/Student/Univerisites";
-import Colleges from "./pages/Student/Colleges";
-import Courses from "./pages/Student/Courses";
-import Degrees from "./pages/Student/Degrees";
-import Admissions from "./pages/Student/Admissions";
-import Scholarships from "./pages/Student/Scholarships";
+import Home from "./pages/student/Home";
+import Colleges from "./pages/student/Colleges";
+import Courses from "./pages/student/Courses";
+import Admissions from "./pages/student/Admissions";
+import Scholarships from "./pages/student/Scholarships";
 
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
@@ -33,6 +31,7 @@ import CollegePosts from "./pages/college/Posts";
 import CollegeApplications from "./pages/college/Applications";
 import CollegeSessions from "./pages/college/Sessions";
 import CollegeProfile from "./pages/college/Profile";
+import CollegeSettings from "./pages/college/Settings";
 
 import AdminDashboard from "./pages/Admin/Dashboard";
 import AdminCollegeVerifications from "./pages/Admin/CollegeVerifications";
@@ -44,6 +43,13 @@ import AdminSettings from "./pages/admin/AdminSettings";
 import CollegeCourses from "./pages/college/CollegeCourses";
 import CollegeEvents from "./pages/college/CollegeEvents";
 import Events from "./pages/student/Events";
+import SingleCollege from "./pages/student/SingleCollege";
+import ScrollToTop from "./components/ScrollToTop";
+import CollegeScholarships from "./pages/college/CollegeScholarships";
+import SingleCollegeEvent from "./pages/student/SingleCollegeEvent";
+import SingleCollegeScholarship from "./pages/student/SingleCollegeScholarship";
+import SingleCollegeCourse from "./pages/student/SingleCollegeCourse";
+import StudentProfile from "./pages/student/StudentProfile";
 
 const App = () => {
   const location = useLocation();
@@ -55,6 +61,7 @@ const App = () => {
 
   return (
     <>
+    <ScrollToTop />
       <ToastContainer
         position="top-right"
         autoClose={2500}
@@ -81,9 +88,14 @@ const App = () => {
         <Route element={<StudentLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/colleges" element={<Colleges />} />
+          <Route path="/colleges/:id" element={<SingleCollege />} />
+          <Route path="/colleges/:id/event/:eventId" element={<SingleCollegeEvent />} />
+          <Route path="/colleges/:id/scholarship/:scholarshipId" element={<SingleCollegeScholarship />} />
+          <Route path="/colleges/:id/course/:courseId" element={<SingleCollegeCourse />} />
           <Route path="/courses" element={<Courses />} />
           <Route path="/events" element={<Events />} />
           <Route path="/scholarships" element={<Scholarships />} />
+          <Route path="/profile" element={<StudentProfile />} />
         </Route>
 
         {/* STUDENT DASHBOARD */}
@@ -99,11 +111,12 @@ const App = () => {
             <Route path="/college" element={<CollegeDashboard />} />
             <Route path="/college/verification" element={<CollegeVerification />} />
             <Route path="/college/courses" element={<CollegeCourses />} />
-            <Route path="/college/scholarships" element={<Scholarships />} />
+            <Route path="/college/scholarships" element={<CollegeScholarships />} />
             <Route path="/college/events" element={<CollegeEvents />} />
             <Route path="/college/applications" element={<CollegeApplications />} />
             <Route path="/college/sessions" element={<CollegeSessions />} />
             <Route path="/college/profile" element={<CollegeProfile />} />
+            <Route path="/college/settings" element={<CollegeSettings />} />
           </Route>
         </Route>
 

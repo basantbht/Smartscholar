@@ -1,4 +1,3 @@
-
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -11,8 +10,12 @@ const collegeProfileSchema = new mongoose.Schema(
     phone: { type: String, trim: true, default: null },
     website: { type: String, trim: true, default: null },
     description: { type: String, trim: true, default: null },
-        image: { type: String, trim: true, default: null }, // Add this line
+    image: { type: String, trim: true, default: null },
 
+    // New fields (references to independent collections)
+    courses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Course" }],
+    events: [{ type: mongoose.Schema.Types.ObjectId, ref: "Event" }],
+    scholarships: [{ type: mongoose.Schema.Types.ObjectId, ref: "Scholarship" }],
   },
   { _id: false }
 );
@@ -35,7 +38,7 @@ const userSchema = new mongoose.Schema(
     },
     isVerified: { type: Boolean, default: false },
 
-    // Student profile (only for Students)
+    // Student profile
     studentProfile: {
       seeGpa: { type: Number, default: null },
       plusTwoGpa: { type: Number, default: null },
@@ -44,10 +47,10 @@ const userSchema = new mongoose.Schema(
       category: { type: String, default: null },
     },
 
-    // College profile (only for Colleges)
+    // College profile
     collegeProfile: { type: collegeProfileSchema, default: () => ({}) },
 
-    // Verification status (only for Colleges)
+    // Verification status
     verificationStatus: {
       type: String,
       enum: ["notSubmitted", "pending", "approved", "rejected"],
@@ -62,10 +65,8 @@ const userSchema = new mongoose.Schema(
 
 userSchema.pre("save", async function () {
   if (!this.isModified("password")) return;
-
   this.password = await bcrypt.hash(this.password, 10);
 });
-
 
 userSchema.methods.comparePassword = async function (entered) {
   return bcrypt.compare(entered, this.password);
