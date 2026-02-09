@@ -19,7 +19,7 @@ const items = [
   { label: "Courses", icon: FileCheck2, to: "/college/courses" },
   { label: "Scholarships", icon: Megaphone, to: "/college/scholarships" },
   { label: "Events", icon: Megaphone, to: "/college/events" },  
-  { label: "Applications", icon: ClipboardList, to: "/college/applications" },
+  { label: "Applications", icon: ClipboardList, to: "/college/eventlist" },
   { label: "Sessions", icon: MessageCircle, to: "/college/sessions" },
 
 ];

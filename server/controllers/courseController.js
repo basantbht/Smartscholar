@@ -16,7 +16,7 @@ const ensureApprovedCollege = (req, next) => {
 export const createCourse = asyncHandler(async (req, res, next) => {
   ensureApprovedCollege(req, next);
 
-  const { name, degree, seats, school, duration } = req.body;
+    const { name, degree, seats, school, duration } = req.body;
 
   if (!name) {
     return next(new ErrorHandler("Course name is required", 400));
