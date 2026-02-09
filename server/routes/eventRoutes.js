@@ -8,12 +8,23 @@ import {
   getEventById,
   updateEvent,
   deleteEvent,
-  getEventRegistrations,
-  reviewEventRegistration,
   toggleEventStatus,
+  getAllCollegesEvents,
+  applyForEvent,
+  getAllEventApplications,
+  getApplicationById,
+  approveApplication,
+  rejectApplication,
+  updatePaymentStatus,
+  getMyStudentApplications,
 } from "../controllers/eventController.js";
 
 const router = express.Router();
+
+
+//for students routes
+router.get("/all", getAllCollegesEvents);
+router.get("/my-applications", isAuthenticated, isAuthorized("Student"), getMyStudentApplications); // NEW: Get all my applications
 
 // Event CRUD
 router.post(
@@ -63,19 +74,59 @@ router.patch(
   toggleEventStatus
 );
 
-// Event Registrations
+// College only
+// Get all applications for a specific event
 router.get(
-  "/:eventId/registrations",
+  "/:eventId/applications",
   isAuthenticated,
   isAuthorized("College"),
-  getEventRegistrations
+  getAllEventApplications
 );
 
-router.put(
-  "/registrations/:registrationId/review",
+// Get single application details
+router.get(
+  "/applications/:applicationId",
   isAuthenticated,
   isAuthorized("College"),
-  reviewEventRegistration
+  getApplicationById
 );
+
+// Approve application
+router.patch(
+  "/applications/:applicationId/approve",
+  isAuthenticated,
+  isAuthorized("College"),
+  approveApplication
+);
+
+// Reject application
+router.patch(
+  "/applications/:applicationId/reject",
+  isAuthenticated,
+  isAuthorized("College"),
+  rejectApplication
+);
+
+// Update payment status
+router.patch(
+  "/applications/:applicationId/payment",
+  isAuthenticated,
+  isAuthorized("College"),
+  updatePaymentStatus
+);
+
+
+
+
+
+// apply for events
+router.post(
+  "/:eventId/apply",
+  isAuthenticated,
+  isAuthorized("Student"),
+  applyForEvent
+);
+
+
 
 export default router;

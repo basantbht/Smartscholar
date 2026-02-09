@@ -126,16 +126,16 @@ const Courses = () => {
     return (
       <div
         onClick={() => navigate(`/colleges/${course.college?._id}`)}
-        className="group bg-white rounded-lg border border-gray-200 hover:border-blue-500 transition-all duration-200 cursor-pointer overflow-hidden hover:shadow-md"
+        className="group bg-white rounded-xl border-2 border-gray-200 hover:border-blue-400 transition-all duration-200 cursor-pointer overflow-hidden shadow-sm hover:shadow-lg"
       >
         {/* Course Header */}
-        <div className="p-5 border-b border-gray-100">
-          <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
+        <div className="p-5 border-b-2 border-gray-100">
+          <h3 className="text-base font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug">
             {course.name}
           </h3>
 
           <div className="flex items-start gap-2 text-sm text-gray-600">
-            <Building2 className="w-4 h-4 mt-0.5 flex-shrink-0" />
+            <Building2 className="w-4 h-4 mt-0.5 flex-shrink-0 text-gray-400" />
             <span className="line-clamp-1">{collegeName}</span>
           </div>
         </div>
@@ -145,27 +145,27 @@ const Courses = () => {
           {/* Degree & School */}
           <div className="flex flex-wrap gap-2">
             {course.degree && (
-              <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 text-xs font-medium">
+              <span className="inline-flex items-center px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 text-xs font-semibold border border-blue-100">
                 {course.degree}
               </span>
             )}
             {course.school && (
-              <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-gray-100 text-gray-700 text-xs font-medium">
+              <span className="inline-flex items-center px-3 py-1.5 rounded-lg bg-gray-100 text-gray-700 text-xs font-semibold border border-gray-200">
                 {course.school}
               </span>
             )}
           </div>
 
           {/* Seats & Duration */}
-          <div className="flex items-center justify-between pt-2">
+          <div className="flex items-center justify-between pt-2 border-t border-gray-100">
             <div className="flex items-center gap-1.5 text-sm text-gray-600">
-              <Clock className="w-4 h-4" />
+              <Clock className="w-4 h-4 text-gray-400" />
               <span>4 years</span>
             </div>
 
             {course.seats !== undefined && (
               <div className="text-sm">
-                <span className="font-semibold text-gray-900">
+                <span className="font-bold text-gray-900">
                   {course.seats}
                 </span>
                 <span className="text-gray-500 ml-1">seats</span>
@@ -193,8 +193,8 @@ const Courses = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex gap-8">
           {/* Left Sidebar - Filters */}
-          <aside className="w-72 flex-shrink-0">
-            <div className="bg-white rounded-lg border border-gray-200 p-6 sticky top-8">
+          <aside className="w-64 flex-shrink-0">
+            <div className="bg-white rounded-xl border-2 border-gray-200 p-5 sticky top-8 shadow-sm">
               {/* Filter Header */}
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-lg font-bold text-gray-900">Filters</h2>
@@ -369,7 +369,7 @@ const Courses = () => {
                 )}
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5">
                 {displayCourses.map((course) => (
                   <CourseCard key={course._id} course={course} />
                 ))}
