@@ -1,8 +1,9 @@
 import { asyncHandler } from "../middlewares/asyncHandler.js";
 import ErrorHandler from "../middlewares/error.js";
 import { User } from "../models/user.js";
-import { sendVerificationEmail } from "../Mail/mail.send.js";
+import { sendVerificationEmail, sendPasswordResetEmail } from "../Mail/mail.send.js";
 import { createEmailVerifyToken, verifyEmailVerifyToken } from "../utils/emailToken.js";
+import { createPasswordResetToken, verifyPasswordResetToken } from "../utils/passwordResetToken.js";
 import { generateToken } from "../utils/generateToken.js";
 
 const emailRegex = /^\S+@\S+\.\S+$/;
@@ -149,4 +150,93 @@ export const verifyEmail = asyncHandler(async (req, res, next) => {
   await user.save();
 
   return res.redirect(`${process.env.FRONTEND_URL}/login?verified=true`);
+});
+
+// ✅ FORGOT PASSWORD - Send reset email
+export const forgotPassword = asyncHandler(async (req, res, next) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return next(new ErrorHandler("Email is required", 400));
+  }
+
+  if (!emailRegex.test(email)) {
+    return next(new ErrorHandler("Invalid email format", 400));
+  }
+
+  const user = await User.findOne({ email });
+  
+  // ✅ Security: Don't reveal if user exists or not
+  // Always return success message to prevent email enumeration
+  if (!user) {
+    return res.status(200).json({
+      success: true,
+      message: "If an account with that email exists, a password reset link has been sent.",
+    });
+  }
+
+  // ✅ Generate reset token
+  const resetToken = createPasswordResetToken(user._id);
+  const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
+
+  // ✅ Send email
+  try {
+    await sendPasswordResetEmail({
+      email: user.email,
+      name: user.name,
+      resetLink,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "If an account with that email exists, a password reset link has been sent.",
+    });
+  } catch (error) {
+    console.error("Failed to send password reset email:", error);
+    return next(new ErrorHandler("Failed to send reset email. Please try again later.", 500));
+  }
+});
+
+// ✅ RESET PASSWORD - Verify token and update password
+export const resetPassword = asyncHandler(async (req, res, next) => {
+  const { token, newPassword, confirmPassword } = req.body;
+
+  if (!token || !newPassword || !confirmPassword) {
+    return next(new ErrorHandler("All fields are required", 400));
+  }
+
+  if (newPassword !== confirmPassword) {
+    return next(new ErrorHandler("Passwords do not match", 400));
+  }
+
+  if (newPassword.length < 6) {
+    return next(new ErrorHandler("Password must be at least 6 characters long", 400));
+  }
+
+  // ✅ Verify token
+  let payload;
+  try {
+    payload = verifyPasswordResetToken(token);
+  } catch (error) {
+    return next(new ErrorHandler("Invalid or expired reset token", 400));
+  }
+
+  if (!payload?.userId) {
+    return next(new ErrorHandler("Invalid reset token", 400));
+  }
+
+  // ✅ Find user and update password
+  const user = await User.findById(payload.userId);
+  if (!user) {
+    return next(new ErrorHandler("User not found", 404));
+  }
+
+  // ✅ Update password (will be hashed by model pre-save hook)
+  user.password = newPassword;
+  await user.save();
+
+  res.status(200).json({
+    success: true,
+    message: "Password reset successfully. You can now login with your new password.",
+  });
 });

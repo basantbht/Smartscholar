@@ -172,3 +172,64 @@ SMARTSCHOLAR Team
     `,
   });
 };
+
+/* ---------------- Password Reset ---------------- */
+export const sendPasswordResetEmail = async ({ email, name, resetLink }) => {
+  return sendEmail({
+    to: email,
+    subject: "Reset Your Password - SMARTSCHOLAR",
+    text: `Hello ${name || "there"},
+
+We received a request to reset the password for your SMARTSCHOLAR account.
+
+Please reset your password using the link below:
+${resetLink}
+
+This link expires in 15 minutes for security reasons.
+
+If you didn't request a password reset, you can safely ignore this email. Your password will remain unchanged.
+
+Best regards,
+SMARTSCHOLAR Team
+`,
+    html: `
+      <div style="font-family: Arial, sans-serif; line-height: 1.6; max-width: 600px; margin: 0 auto;">
+        <div style="background: #1e3a8a; color: white; padding: 20px; border-radius: 8px 8px 0 0;">
+          <h2 style="margin: 0;">🔐 Password Reset Request</h2>
+        </div>
+        
+        <div style="padding: 20px; background: #f9fafb; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 8px 8px;">
+          <p>Hello <strong>${name || "there"}</strong>,</p>
+          
+          <p>We received a request to reset the password for your SMARTSCHOLAR account. If you made this request, click the button below to reset your password:</p>
+          
+          <div style="text-align: center; margin: 24px 0;">
+            <a href="${resetLink}" 
+               style="display: inline-block; background: #1e3a8a; color: white; padding: 14px 30px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+              Reset Password
+            </a>
+          </div>
+          
+          <p>Or copy and paste this link into your browser:</p>
+          <p style="word-break: break-all; color: #1e3a8a; font-size: 14px; background: white; padding: 12px; border-radius: 4px;">${resetLink}</p>
+          
+          <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0; border-radius: 4px;">
+            <p style="margin: 0;"><strong>⚠️ Important:</strong> This link will expire in <strong>15 minutes</strong> for security reasons.</p>
+          </div>
+          
+          <p>If you didn't request a password reset, you can safely ignore this email. Your password will remain unchanged.</p>
+          
+          <p style="margin-top: 24px; color: #6b7280; font-size: 14px;">
+            This is an automated email. Please do not reply to this message.<br><br>
+            Best regards,<br>
+            <strong>SMARTSCHOLAR Team</strong>
+          </p>
+          
+          <p style="text-align: center; color: #9ca3af; font-size: 12px; margin-top: 20px;">
+            &copy; ${new Date().getFullYear()} SMARTSCHOLAR. All rights reserved.
+          </p>
+        </div>
+      </div>
+    `,
+  });
+};

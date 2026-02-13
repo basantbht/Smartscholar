@@ -48,6 +48,8 @@ import SingleCollegeCourse from "./pages/student/SingleCollegeCourse";
 import StudentProfile from "./pages/student/StudentProfile";
 import EventsList from "./pages/college/EventsList";
 import SearchResults from "./components/SearchResults";
+import ForgotPassword from "./pages/auth/ForgotPassword";
+import ResetPassword from "./pages/auth/ResetPassword";
 
 const App = () => {
   const location = useLocation();
@@ -95,7 +97,9 @@ const App = () => {
           <Route path="/events" element={<Events />} />
           <Route path="/scholarships" element={<Scholarships />} />
           <Route path="/profile" element={<StudentProfile />} />
-<Route path="/search" element={<SearchResults />} />
+          <Route path="/search" element={<SearchResults />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
         </Route>
 
         {/* STUDENT DASHBOARD */}

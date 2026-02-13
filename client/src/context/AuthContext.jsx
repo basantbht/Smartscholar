@@ -12,6 +12,8 @@ export const AuthProvider = ({ children }) => {
   const [loginLoading, setLoginLoading] = useState(false);
   const [registerLoading, setRegisterLoading] = useState(false);
   const [logoutLoading, setLogoutLoading] = useState(false);
+  const [forgotPasswordLoading, setForgotPasswordLoading] = useState(false);
+  const [resetPasswordLoading, setResetPasswordLoading] = useState(false);
 
   const fetchMe = async () => {
     setMeLoading(true);
@@ -110,6 +112,50 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // ✅ FORGOT PASSWORD
+  const forgotPassword = async (email) => {
+    setForgotPasswordLoading(true);
+    try {
+      const res = await api.post("/auth/forgot-password", { email });
+
+      if (res.data.success) {
+        toast.success(res.data.message);
+      }
+
+      return res.data;
+    } catch (error) {
+      console.log(error);
+      toast.error(error.response?.data?.message || "Failed to send reset email");
+      throw error;
+    } finally {
+      setForgotPasswordLoading(false);
+    }
+  };
+
+  // ✅ RESET PASSWORD
+  const resetPassword = async ({ token, newPassword, confirmPassword }) => {
+    setResetPasswordLoading(true);
+    try {
+      const res = await api.post("/auth/reset-password", {
+        token,
+        newPassword,
+        confirmPassword,
+      });
+
+      if (res.data.success) {
+        toast.success(res.data.message);
+      }
+
+      return res.data;
+    } catch (error) {
+      console.log(error);
+      toast.error(error.response?.data?.message || "Failed to reset password");
+      throw error;
+    } finally {
+      setResetPasswordLoading(false);
+    }
+  };
+
   const value = useMemo(
     () => ({
       user,
@@ -117,12 +163,24 @@ export const AuthProvider = ({ children }) => {
       loginLoading,
       registerLoading,
       logoutLoading,
+      forgotPasswordLoading,
+      resetPasswordLoading,
       login,
       register,
       logout,
+      forgotPassword,
+      resetPassword,
       refresh: fetchMe,
     }),
-    [user, meLoading, loginLoading, registerLoading, logoutLoading]
+    [
+      user,
+      meLoading,
+      loginLoading,
+      registerLoading,
+      logoutLoading,
+      forgotPasswordLoading,
+      resetPasswordLoading,
+    ]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

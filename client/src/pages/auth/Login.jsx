@@ -88,7 +88,10 @@ const Login = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-sm font-medium text-gray-700">Password</label>
+              
+            </div>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
                 <Lock className="w-5 h-5" />
@@ -110,6 +113,7 @@ const Login = () => {
             </div>
           </div>
 
+
           <button
             type="submit"
             disabled={loginLoading}
@@ -123,6 +127,15 @@ const Login = () => {
               "Sign In"
             )}
           </button>
+          
+          <div className="flex justify-end">
+            <Link 
+                to="/forgot-password" 
+                className="text-sm text-blue-900 hover:underline font-medium"
+              >
+                Forgot Password?
+              </Link>
+          </div>
         </form>
 
         <div className="mt-6 text-center space-y-2">
