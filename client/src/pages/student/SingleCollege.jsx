@@ -260,7 +260,7 @@ const SingleCollege = () => {
       </header>
 
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-700 overflow-hidden">
+      <div className="relative bg-linear-to-br from-blue-600 via-blue-700 to-indigo-700 overflow-hidden">
         {heroImage && (
           <>
             <img
@@ -268,7 +268,7 @@ const SingleCollege = () => {
               alt={collegeName}
               className="absolute inset-0 w-full h-full object-cover opacity-20"
             />
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-600/80 via-blue-700/80 to-indigo-700/80" />
+            <div className="absolute inset-0 bg-linear-to-br from-blue-600/80 via-blue-700/80 to-indigo-700/80" />
           </>
         )}
         
@@ -377,7 +377,7 @@ const SingleCollege = () => {
                         <div
                           key={c._id}
                           onClick={() => navigate(`/colleges/${id}/course/${c._id}`)}
-                          className="border border-gray-200 rounded-xl p-5 hover:shadow-lg hover:border-blue-200 transition-all bg-gradient-to-br from-white to-gray-50 cursor-pointer"
+                          className="border border-gray-200 rounded-xl p-5 hover:shadow-lg hover:border-blue-200 transition-all bg-linear-to-br from-white to-gray-50 cursor-pointer"
                         >
                           <div className="flex items-start justify-between mb-3">
                             <span className="text-xs font-semibold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full">
@@ -425,7 +425,7 @@ const SingleCollege = () => {
                                 className="w-full sm:w-32 h-32 object-cover rounded-lg"
                               />
                             ) : (
-                              <div className="w-full sm:w-32 h-32 rounded-lg bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center border border-gray-200">
+                              <div className="w-full sm:w-32 h-32 rounded-lg bg-linear-to-br from-blue-50 to-indigo-50 flex items-center justify-center border border-gray-200">
                                 <CalendarDays className="w-8 h-8 text-blue-400" />
                               </div>
                             )}
@@ -487,7 +487,7 @@ const SingleCollege = () => {
                         <div
                           key={s._id}
                           onClick={() => navigate(`/colleges/${id}/scholarship/${s._id}`)}
-                          className="border border-gray-200 rounded-xl p-5 hover:shadow-lg transition-all bg-gradient-to-br from-white to-amber-50/30 cursor-pointer hover:border-purple-200"
+                          className="border border-gray-200 rounded-xl p-5 hover:shadow-lg transition-all bg-linear-to-br from-white to-amber-50/30 cursor-pointer hover:border-purple-200"
                         >
                           <div className="flex items-start justify-between gap-3 mb-4">
                             <div className="flex-1">

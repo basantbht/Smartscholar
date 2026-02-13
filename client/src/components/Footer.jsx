@@ -62,7 +62,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="relative bg-gradient-to-b from-slate-50 to-white border-t border-gray-100 mt-20">
+    <footer className="relative bg-linear-to-b from-slate-50 to-white border-t border-gray-100 mt-20">
       {/* Decorative Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-100/30 rounded-full blur-3xl"></div>
@@ -76,10 +76,10 @@ export default function Footer() {
           <div className="lg:col-span-2 space-y-6">
             <Link to="/" className="inline-block group">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform shadow-lg">
+                <div className="w-12 h-12 bg-linear-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform shadow-lg">
                   <GraduationCap className="w-7 h-7 text-white" />
                 </div>
-                <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                <span className="text-2xl font-bold bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                   Smartscholar
                 </span>
               </div>
@@ -115,7 +115,7 @@ export default function Footer() {
           {/* For Schools & Colleges */}
           <div className="space-y-6">
             <h4 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-              <div className="w-1 h-6 bg-gradient-to-b from-blue-600 to-indigo-600 rounded-full"></div>
+              <div className="w-1 h-6 bg-linear-to-b from-blue-600 to-indigo-600 rounded-full"></div>
               For Colleges
             </h4>
             <ul className="space-y-3">
@@ -125,7 +125,7 @@ export default function Footer() {
                     to={link.path}
                     className="text-gray-600 hover:text-blue-600 transition-colors duration-200 flex items-start gap-2 group text-sm"
                   >
-                    <ArrowRight className="w-4 h-4 mt-0.5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all duration-200 flex-shrink-0" />
+                    <ArrowRight className="w-4 h-4 mt-0.5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all duration-200 shrink-0" />
                     <span className="font-medium">{link.name}</span>
                   </Link>
                 </li>
@@ -136,7 +136,7 @@ export default function Footer() {
           {/* For Students */}
           <div className="space-y-6">
             <h4 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-              <div className="w-1 h-6 bg-gradient-to-b from-blue-600 to-indigo-600 rounded-full"></div>
+              <div className="w-1 h-6 bg-linear-to-b from-blue-600 to-indigo-600 rounded-full"></div>
               For Students
             </h4>
             <ul className="space-y-3">
@@ -146,7 +146,7 @@ export default function Footer() {
                     to={link.path}
                     className="text-gray-600 hover:text-blue-600 transition-colors duration-200 flex items-start gap-2 group text-sm"
                   >
-                    <ArrowRight className="w-4 h-4 mt-0.5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all duration-200 flex-shrink-0" />
+                    <ArrowRight className="w-4 h-4 mt-0.5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all duration-200 shrink-0" />
                     <span className="font-medium">{link.name}</span>
                   </Link>
                 </li>
@@ -157,12 +157,12 @@ export default function Footer() {
           {/* Contact Info - Right Side */}
           <div className="space-y-6">
             <h4 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-              <div className="w-1 h-6 bg-gradient-to-b from-blue-600 to-indigo-600 rounded-full"></div>
+              <div className="w-1 h-6 bg-linear-to-b from-blue-600 to-indigo-600 rounded-full"></div>
               Contact Us
             </h4>
             <div className="space-y-4">
               <div className="flex items-start gap-3 text-sm text-gray-600 group">
-                <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0 group-hover:bg-blue-100 transition-colors">
+                <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center shrink-0 group-hover:bg-blue-100 transition-colors">
                   <MapPin className="w-4 h-4 text-blue-600" />
                 </div>
                 <div>
@@ -172,7 +172,7 @@ export default function Footer() {
               </div>
               
               <div className="flex items-start gap-3 text-sm text-gray-600 group">
-                <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0 group-hover:bg-blue-100 transition-colors">
+                <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center shrink-0 group-hover:bg-blue-100 transition-colors">
                   <Phone className="w-4 h-4 text-blue-600" />
                 </div>
                 <div>
@@ -184,7 +184,7 @@ export default function Footer() {
               </div>
               
               <div className="flex items-start gap-3 text-sm text-gray-600 group">
-                <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0 group-hover:bg-blue-100 transition-colors">
+                <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center shrink-0 group-hover:bg-blue-100 transition-colors">
                   <Mail className="w-4 h-4 text-blue-600" />
                 </div>
                 <div>

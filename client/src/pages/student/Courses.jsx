@@ -135,7 +135,7 @@ const Courses = () => {
           </h3>
 
           <div className="flex items-start gap-2 text-sm text-gray-600">
-            <Building2 className="w-4 h-4 mt-0.5 flex-shrink-0 text-gray-400" />
+            <Building2 className="w-4 h-4 mt-0.5 shrink-0 text-gray-400" />
             <span className="line-clamp-1">{collegeName}</span>
           </div>
         </div>
@@ -193,7 +193,7 @@ const Courses = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex gap-8">
           {/* Left Sidebar - Filters */}
-          <aside className="w-64 flex-shrink-0">
+          <aside className="w-64 shrink-0">
             <div className="bg-white rounded-xl border-2 border-gray-200 p-5 sticky top-8 shadow-sm">
               {/* Filter Header */}
               <div className="flex items-center justify-between mb-6">

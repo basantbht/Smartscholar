@@ -143,7 +143,7 @@ const Events = () => {
         className="group bg-white rounded-xl border-2 border-gray-200 hover:border-blue-400 transition-all duration-200 cursor-pointer overflow-hidden shadow-sm hover:shadow-lg"
       >
         {/* Event Image */}
-        <div className="relative h-40 bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-500 overflow-hidden">
+        <div className="relative h-40 bg-linear-to-br from-blue-500 via-indigo-500 to-purple-500 overflow-hidden">
           {event.banner || event.thumbnail ? (
             <img
               src={event.banner || event.thumbnail}
@@ -173,7 +173,7 @@ const Events = () => {
           </h3>
 
           <div className="flex items-start gap-2 text-sm text-gray-600">
-            <Building2 className="w-4 h-4 mt-0.5 flex-shrink-0 text-gray-400" />
+            <Building2 className="w-4 h-4 mt-0.5 shrink-0 text-gray-400" />
             <span className="line-clamp-1">{collegeName}</span>
           </div>
         </div>
@@ -197,14 +197,14 @@ const Events = () => {
 
           <div className="space-y-2 pt-2 border-t border-gray-100">
             <div className="flex items-center gap-2 text-sm">
-              <Calendar className="w-4 h-4 text-blue-600 flex-shrink-0" />
+              <Calendar className="w-4 h-4 text-blue-600 shrink-0" />
               <span className="text-gray-700">
                 {format(new Date(event.startDate), "MMM dd, yyyy")}
               </span>
             </div>
 
             <div className="flex items-center gap-2 text-sm">
-              <MapPin className="w-4 h-4 text-blue-600 flex-shrink-0" />
+              <MapPin className="w-4 h-4 text-blue-600 shrink-0" />
               <span className="text-gray-700 truncate">
                 {event.isOnline ? "Online Event" : event.venue}
               </span>
@@ -213,7 +213,7 @@ const Events = () => {
             {event.maxParticipants && (
               <div className="flex items-center justify-between text-sm">
                 <div className="flex items-center gap-2">
-                  <Users className="w-4 h-4 text-blue-600 flex-shrink-0" />
+                  <Users className="w-4 h-4 text-blue-600 shrink-0" />
                   <span className="text-gray-700">
                     {event.currentParticipants}/{event.maxParticipants}
                   </span>
@@ -226,7 +226,7 @@ const Events = () => {
 
             {registrationOpen && (
               <div className="flex items-center gap-2 text-sm">
-                <Clock className="w-4 h-4 text-orange-600 flex-shrink-0" />
+                <Clock className="w-4 h-4 text-orange-600 shrink-0" />
                 <span className="text-gray-700">Registration open</span>
               </div>
             )}
@@ -252,7 +252,7 @@ const Events = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex gap-8">
           {/* Left Sidebar - Filters */}
-          <aside className="w-64 flex-shrink-0">
+          <aside className="w-64 shrink-0">
             <div className="bg-white rounded-xl border-2 border-gray-200 p-5 sticky top-8 max-h-[calc(100vh-4rem)] overflow-y-auto shadow-sm">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-lg font-bold text-gray-900">Filters</h2>

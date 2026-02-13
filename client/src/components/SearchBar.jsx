@@ -33,7 +33,7 @@ const SearchBar = () => {
         {/* Search Button */}
         <button
           type="submit"
-          className="flex-shrink-0 px-8 py-5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-lg hover:shadow-xl"
+          className="shrink-0 px-8 py-5 bg-linear-to-r from-blue-600 to-indigo-600 text-white font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-lg hover:shadow-xl"
         >
           <span className="hidden sm:inline">Search</span>
           <Search className="w-5 h-5 sm:hidden" />

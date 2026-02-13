@@ -47,25 +47,25 @@ const Home = () => {
       icon: GraduationCap,
       title: "Discover Programs",
       description: "Explore diverse courses and programs tailored to your career goals across top institutions.",
-      gradient: "from-blue-500 to-indigo-600",
+      linear: "from-blue-500 to-indigo-600",
     },
     {
       icon: Award,
       title: "Find Scholarships",
       description: "Access exclusive scholarship opportunities and funding options to support your education.",
-      gradient: "from-purple-500 to-pink-600",
+      linear: "from-purple-500 to-pink-600",
     },
     {
       icon: Calendar,
       title: "Track Events",
       description: "Stay updated with college events, seminars, and workshops happening near you.",
-      gradient: "from-green-500 to-emerald-600",
+      linear: "from-green-500 to-emerald-600",
     },
     {
       icon: TrendingUp,
       title: "Career Growth",
       description: "Get insights into career paths and opportunities aligned with your field of study.",
-      gradient: "from-orange-500 to-red-600",
+      linear: "from-orange-500 to-red-600",
     },
   ];
 
@@ -92,7 +92,7 @@ const Home = () => {
           <div className="text-center max-w-3xl mx-auto">
             <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight" style={{ fontFamily: 'Georgia, serif' }}>
               Discover Your Perfect
-              <span className="block mt-3 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+              <span className="block mt-3 bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                 College Match
               </span>
             </h1>
@@ -109,7 +109,7 @@ const Home = () => {
       </section>
 
       {/* Stats Section */} 
-      <section className="relative py-20 px-4 bg-gradient-to-b from-white to-slate-50">
+      <section className="relative py-20 px-4 bg-linear-to-b from-white to-slate-50">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
             {stats.map((stat, index) => {
@@ -126,7 +126,7 @@ const Home = () => {
                   key={index}
                   className="group bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:-translate-y-2"
                 >
-                  <div className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${colors[stat.color]} mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                  <div className={`inline-flex p-3 rounded-xl bg-linear-to-br ${colors[stat.color]} mb-4 group-hover:scale-110 transition-transform duration-300`}>
                     <Icon className="w-6 h-6 text-white" />
                   </div>
                   <h3 className="text-2xl md:text-3xl font-bold text-slate-900 mb-1">{stat.value}</h3>
@@ -158,11 +158,11 @@ const Home = () => {
                   key={index}
                   className="group relative bg-white rounded-2xl p-8 shadow-md hover:shadow-xl transition-all duration-500 border border-gray-100 overflow-hidden hover:-translate-y-2"
                 >
-                  {/* Gradient Background on Hover */}
-                  <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`}></div>
+                  {/* linear Background on Hover */}
+                  <div className={`absolute inset-0 bg-linear-to-br ${feature.linear} opacity-0 group-hover:opacity-5 transition-opacity duration-500`}></div>
                   
                   <div className="relative">
-                    <div className={`inline-flex p-4 rounded-xl bg-gradient-to-br ${feature.gradient} mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                    <div className={`inline-flex p-4 rounded-xl bg-linear-to-br ${feature.linear} mb-4 group-hover:scale-110 transition-transform duration-300`}>
                       <Icon className="w-8 h-8 text-white" />
                     </div>
                     <h3 className="text-xl font-bold text-slate-900 mb-3">{feature.title}</h3>
@@ -176,7 +176,7 @@ const Home = () => {
       </section>
 
       {/* Categories Section */}
-      <section className="py-20 px-4 bg-gradient-to-b from-slate-50 to-white">
+      <section className="py-20 px-4 bg-linear-to-b from-slate-50 to-white">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-4" style={{ fontFamily: 'Georgia, serif' }}>
@@ -192,7 +192,7 @@ const Home = () => {
               <button
                 key={index}
                 onClick={() => navigate('/courses')}
-                className="group relative bg-gradient-to-br from-slate-50 to-white rounded-2xl p-6 border-2 border-slate-200 hover:border-blue-500 transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+                className="group relative bg-linear-to-br from-slate-50 to-white rounded-2xl p-6 border-2 border-slate-200 hover:border-blue-500 transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
               >
                 <div className="text-4xl md:text-5xl mb-3 group-hover:scale-110 transition-transform duration-300">
                   {category.icon}
@@ -228,7 +228,7 @@ const Home = () => {
                     className="group cursor-pointer bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:-translate-y-2"
                   >
                     {/* Image */}
-                    <div className="relative h-48 overflow-hidden bg-gradient-to-br from-blue-100 to-purple-100">
+                    <div className="relative h-48 overflow-hidden bg-linear-to-br from-blue-100 to-purple-100">
                       {profile?.image ? (
                         <img
                           src={profile.image}
@@ -258,7 +258,7 @@ const Home = () => {
                       
                       {profile?.address && (
                         <div className="flex items-center gap-2 text-sm text-slate-600 mb-4">
-                          <MapPin className="w-4 h-4 flex-shrink-0" />
+                          <MapPin className="w-4 h-4 shrink-0" />
                           <span className="line-clamp-1">{profile.address}</span>
                         </div>
                       )}
@@ -284,7 +284,7 @@ const Home = () => {
             <div className="text-center mt-12">
               <button
                 onClick={() => navigate('/colleges')}
-                className="group px-8 py-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-2 mx-auto"
+                className="group px-8 py-4 rounded-xl bg-linear-to-r from-blue-600 to-indigo-600 text-white font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-2 mx-auto"
               >
                 View All Colleges
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -297,7 +297,7 @@ const Home = () => {
       {/* CTA Section */}
       <section className="relative py-24 overflow-hidden">
         {/* Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700"></div>
+        <div className="absolute inset-0 bg-linear-to-br from-blue-600 via-indigo-600 to-purple-700"></div>
         <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-white/5 rounded-full blur-3xl"></div>
 

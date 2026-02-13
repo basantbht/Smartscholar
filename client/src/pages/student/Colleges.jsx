@@ -66,7 +66,7 @@ const Colleges = () => {
 
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar - Filters */}
-          <aside className="w-full lg:w-80 flex-shrink-0">
+          <aside className="w-full lg:w-80 shrink-0">
             <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 sticky top-6">
               <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2 mb-6">
                 <Filter className="w-5 h-5 text-blue-600" />
@@ -123,9 +123,9 @@ const Colleges = () => {
               </div>
 
               {/* Info Box */}
-              <div className="p-5 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border-2 border-blue-100">
+              <div className="p-5 bg-linear-to-br from-blue-50 to-indigo-50 rounded-xl border-2 border-blue-100">
                 <div className="flex items-start gap-3">
-                  <Award className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <Award className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
                   <div>
                     <p className="text-sm font-semibold text-gray-900 mb-1">Verified Colleges</p>
                     <p className="text-xs text-gray-600 leading-relaxed">
@@ -210,7 +210,7 @@ const Colleges = () => {
                       onClick={() => handleViewCollege(college._id)}
                     >
                       {/* College Image/Header */}
-                      <div className="relative h-48 bg-gradient-to-br from-blue-50 to-indigo-50 overflow-hidden">
+                      <div className="relative h-48 bg-linear-to-br from-blue-50 to-indigo-50 overflow-hidden">
                         {college.collegeProfile?.image ? (
                           <img
                             src={college.collegeProfile.image}
@@ -242,7 +242,7 @@ const Colleges = () => {
                         {/* University Affiliation */}
                         {college.collegeProfile?.universityAffiliation && (
                           <div className="flex items-center gap-2 text-sm text-gray-600 mb-4">
-                            <Award className="w-4 h-4 text-blue-500 flex-shrink-0" />
+                            <Award className="w-4 h-4 text-blue-500 shrink-0" />
                             <span className="font-medium">{college.collegeProfile.universityAffiliation}</span>
                           </div>
                         )}
@@ -258,21 +258,21 @@ const Colleges = () => {
                         <div className="space-y-3 mb-6">
                           {college.email && (
                             <div className="flex items-start gap-3">
-                              <Mail className="w-4 h-4 text-gray-400 flex-shrink-0 mt-0.5" />
+                              <Mail className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
                               <span className="text-sm text-gray-700 break-all">{college.email}</span>
                             </div>
                           )}
                           
                           {college.collegeProfile?.phone && (
                             <div className="flex items-center gap-3">
-                              <Phone className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                              <Phone className="w-4 h-4 text-gray-400 shrink-0" />
                               <span className="text-sm text-gray-700">{college.collegeProfile.phone}</span>
                             </div>
                           )}
                           
                           {college.collegeProfile?.website && (
                             <div className="flex items-center gap-3">
-                              <Globe className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                              <Globe className="w-4 h-4 text-gray-400 shrink-0" />
                               <a
                                 href={college.collegeProfile.website}
                                 target="_blank"
@@ -291,7 +291,7 @@ const Colleges = () => {
                         {college.collegeProfile?.address && (
                           <div className="p-4 bg-gray-50 rounded-xl mb-5 border border-gray-100">
                             <div className="flex items-start gap-2">
-                              <MapPin className="w-4 h-4 text-gray-500 flex-shrink-0 mt-0.5" />
+                              <MapPin className="w-4 h-4 text-gray-500 shrink-0 mt-0.5" />
                               <div>
                                 <p className="text-xs font-semibold text-gray-500 mb-1">Location</p>
                                 <p className="text-sm text-gray-700 leading-relaxed">
@@ -324,7 +324,7 @@ const Colleges = () => {
                             e.stopPropagation();
                             handleViewCollege(college._id);
                           }}
-                          className="w-full py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all font-semibold shadow-lg group-hover:shadow-xl"
+                          className="w-full py-3.5 bg-linear-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all font-semibold shadow-lg group-hover:shadow-xl"
                         >
                           View Full Profile
                         </button>
@@ -366,7 +366,7 @@ const Colleges = () => {
                               onClick={() => handlePageChange(pageNum)}
                               className={`min-w-[44px] px-4 py-2.5 text-sm font-semibold rounded-xl transition-all ${
                                 pageNum === pagination.page
-                                  ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg scale-110'
+                                  ? 'bg-linear-to-r from-blue-600 to-indigo-600 text-white shadow-lg scale-110'
                                   : 'text-gray-700 bg-white border-2 border-gray-300 hover:bg-gray-50 hover:border-gray-400'
                               }`}
                             >

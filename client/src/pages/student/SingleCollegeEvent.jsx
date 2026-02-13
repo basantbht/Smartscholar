@@ -198,7 +198,7 @@ const SingleCollegeEvent = () => {
       </header>
 
       {/* Event Hero */}
-      <div className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-700 overflow-hidden">
+      <div className="relative bg-linear-to-br from-blue-600 via-blue-700 to-indigo-700 overflow-hidden">
         {event.thumbnail && (
           <>
             <img
@@ -206,7 +206,7 @@ const SingleCollegeEvent = () => {
               alt={event.title}
               className="absolute inset-0 w-full h-full object-cover opacity-20"
             />
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-600/90 via-blue-700/90 to-indigo-700/90" />
+            <div className="absolute inset-0 bg-linear-to-br from-blue-600/90 via-blue-700/90 to-indigo-700/90" />
           </>
         )}
 
@@ -535,7 +535,7 @@ const SingleCollegeEvent = () => {
                 <button
                   onClick={handleApplyForEvent}
                   disabled={!canApply}
-                  className="w-full bg-gradient-to-r from-emerald-600 to-green-600 text-white py-3 rounded-xl font-semibold hover:from-emerald-700 hover:to-green-700 transition shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:from-gray-400 disabled:to-gray-500 disabled:shadow-none"
+                  className="w-full bg-linear-to-r from-emerald-600 to-green-600 text-white py-3 rounded-xl font-semibold hover:from-emerald-700 hover:to-green-700 transition shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:from-gray-400 disabled:to-gray-500 disabled:shadow-none"
                 >
                   {isFull ? (
                     <>

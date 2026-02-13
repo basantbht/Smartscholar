@@ -226,12 +226,12 @@ const Scholarships = () => {
                 >
                   {/* Avatar */}
                   <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center text-lg flex-shrink-0 shadow-md ${
+                    className={`w-10 h-10 rounded-full flex items-center justify-center text-lg shrink-0 shadow-md ${
                       msg.role === "user"
-                        ? "bg-gradient-to-br from-blue-600 to-indigo-600 text-white"
+                        ? "bg-linear-to-br from-blue-600 to-indigo-600 text-white"
                         : msg.role === "error"
                         ? "bg-red-100 text-red-600"
-                        : "bg-gradient-to-br from-gray-700 to-gray-900 text-white"
+                        : "bg-linear-to-br from-gray-700 to-gray-900 text-white"
                     }`}
                   >
                     {msg.role === "user" ? "👤" : msg.role === "error" ? "⚠️" : "🎓"}
@@ -243,7 +243,7 @@ const Scholarships = () => {
                     <div
                       className={`px-4 py-3 rounded-2xl shadow-md ${
                         msg.role === "user"
-                          ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-tr-sm"
+                          ? "bg-linear-to-r from-blue-600 to-indigo-600 text-white rounded-tr-sm"
                           : "bg-white border border-gray-200 text-gray-800 rounded-tl-sm"
                       }`}
                     >
@@ -287,7 +287,7 @@ const Scholarships = () => {
               {/* Typing Indicator */}
               {loading && (
                 <div className="flex gap-3 items-start">
-                  <div className="w-10 h-10 bg-gradient-to-br from-gray-700 to-gray-900 rounded-full flex items-center justify-center text-lg flex-shrink-0 shadow-md">
+                  <div className="w-10 h-10 bg-linear-to-br from-gray-700 to-gray-900 rounded-full flex items-center justify-center text-lg shrink-0 shadow-md">
                     🎓
                   </div>
                   <TypingIndicator />
@@ -311,7 +311,7 @@ const Scholarships = () => {
                   <button
                     key={i}
                     onClick={() => sendMessage(s)}
-                    className="bg-gray-50 border border-gray-200 rounded-full px-3 py-1.5 text-xs text-gray-600 hover:bg-gray-100 hover:border-gray-300 transition-all whitespace-nowrap flex-shrink-0"
+                    className="bg-gray-50 border border-gray-200 rounded-full px-3 py-1.5 text-xs text-gray-600 hover:bg-gray-100 hover:border-gray-300 transition-all whitespace-nowrap shrink-0"
                   >
                     {s}
                   </button>
@@ -334,7 +334,7 @@ const Scholarships = () => {
             <button
               onClick={() => sendMessage()}
               disabled={loading || !input.trim()}
-              className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-medium text-sm hover:from-blue-700 hover:to-indigo-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 whitespace-nowrap shadow-md hover:shadow-lg"
+              className="px-6 py-3 bg-linear-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-medium text-sm hover:from-blue-700 hover:to-indigo-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 whitespace-nowrap shadow-md hover:shadow-lg"
             >
               {loading ? (
                 <span>•••</span>

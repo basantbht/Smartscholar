@@ -60,12 +60,12 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
-          <div className="flex items-center flex-shrink-0">
+          <div className="flex items-center shrink-0">
             <Link to="/" className="flex items-center gap-2 group">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform shadow-md">
+              <div className="w-10 h-10 bg-linear-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform shadow-md">
                 <GraduationCap className="w-6 h-6 text-white" />
               </div>
-              <span className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+              <span className="text-xl sm:text-2xl font-bold bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                 Smartscholar
               </span>
             </Link>
@@ -83,7 +83,7 @@ const Navbar = () => {
                     </span>
                     {/* Animated underline - expands from center on hover, instant hide when not active */}
                     <div
-                      className={`absolute bottom-[-6px] left-1/2 -translate-x-1/2 h-0.5 bg-blue-600 ${isActive
+                      className={`absolute -bottom-1.5 left-1/2 -translate-x-1/2 h-0.5 bg-blue-600 ${isActive
                           ? 'w-full'
                           : 'w-0 group-hover:w-full group-hover:transition-all group-hover:duration-300'
                         }`}
@@ -104,7 +104,7 @@ const Navbar = () => {
                   </button>
                 </Link>
                 <Link to="/register">
-                  <button className="px-5 py-2.5 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-md hover:shadow-lg">
+                  <button className="px-5 py-2.5 rounded-lg bg-linear-to-r from-blue-600 to-indigo-600 text-white font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-md hover:shadow-lg">
                     Sign up
                   </button>
                 </Link>
@@ -115,7 +115,7 @@ const Navbar = () => {
                   onClick={() => setDropdownOpen(!dropdownOpen)}
                   className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 transition-all duration-200"
                 >
-                  <div className="w-9 h-9 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full flex items-center justify-center text-white font-semibold text-sm shadow-md">
+                  <div className="w-9 h-9 bg-linear-to-br from-blue-600 to-indigo-600 rounded-full flex items-center justify-center text-white font-semibold text-sm shadow-md">
                     {getUserInitials()}
                   </div>
                   <ChevronDown className={`w-4 h-4 text-gray-600 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''
@@ -213,7 +213,7 @@ const Navbar = () => {
                       </button>
                     </Link>
                     <Link to="/register" onClick={() => setMobileMenuOpen(false)}>
-                      <button className="w-full px-4 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-md">
+                      <button className="w-full px-4 py-3 rounded-lg bg-linear-to-r from-blue-600 to-indigo-600 text-white font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-md">
                         Sign up
                       </button>
                     </Link>
@@ -221,9 +221,9 @@ const Navbar = () => {
                 ) : (
                   <>
                     {/* User Info Mobile */}
-                    <div className="px-4 py-3 rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200">
+                    <div className="px-4 py-3 rounded-lg bg-linear-to-r from-blue-50 to-indigo-50 border border-blue-200">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full flex items-center justify-center text-white font-semibold shadow-md">
+                        <div className="w-10 h-10 bg-linear-to-br from-blue-600 to-indigo-600 rounded-full flex items-center justify-center text-white font-semibold shadow-md">
                           {getUserInitials()}
                         </div>
                         <div>

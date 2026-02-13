@@ -90,8 +90,8 @@ const SingleCollegeCourse = () => {
       </header>
 
       {/* Course Hero */}
-      <div className="relative bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/90 via-indigo-600/90 to-purple-700/90" />
+      <div className="relative bg-linear-to-br from-blue-600 via-indigo-600 to-purple-700 overflow-hidden">
+        <div className="absolute inset-0 bg-linear-to-br from-blue-600/90 via-indigo-600/90 to-purple-700/90" />
 
         <div className="relative max-w-5xl mx-auto px-6 py-12">
           <div className="flex items-center gap-2 text-blue-100 mb-4">
@@ -154,7 +154,7 @@ const SingleCollegeCourse = () => {
                 Key Features
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4">
+                <div className="bg-linear-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="p-2 rounded-lg bg-blue-100 text-blue-600">
                       <GraduationCap className="w-5 h-5" />
@@ -164,7 +164,7 @@ const SingleCollegeCourse = () => {
                   <p className="text-gray-700">{course.degree}</p>
                 </div>
 
-                <div className="bg-gradient-to-br from-purple-50 to-pink-50 border border-purple-200 rounded-xl p-4">
+                <div className="bg-linear-to-br from-purple-50 to-pink-50 border border-purple-200 rounded-xl p-4">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="p-2 rounded-lg bg-purple-100 text-purple-600">
                       <Building2 className="w-5 h-5" />
@@ -174,7 +174,7 @@ const SingleCollegeCourse = () => {
                   <p className="text-gray-700">{course.school}</p>
                 </div>
 
-                <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4">
+                <div className="bg-linear-to-br from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="p-2 rounded-lg bg-green-100 text-green-600">
                       <Users className="w-5 h-5" />
@@ -184,7 +184,7 @@ const SingleCollegeCourse = () => {
                   <p className="text-gray-700">{course.seats} seats available</p>
                 </div>
 
-                <div className="bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-200 rounded-xl p-4">
+                <div className="bg-linear-to-br from-orange-50 to-amber-50 border border-orange-200 rounded-xl p-4">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="p-2 rounded-lg bg-orange-100 text-orange-600">
                       <BookOpen className="w-5 h-5" />
@@ -204,7 +204,7 @@ const SingleCollegeCourse = () => {
               </h2>
               <div className="space-y-4">
                 <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold flex-shrink-0">
+                  <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold shrink-0">
                     1
                   </div>
                   <div>
@@ -218,7 +218,7 @@ const SingleCollegeCourse = () => {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold flex-shrink-0">
+                  <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold shrink-0">
                     2
                   </div>
                   <div>
@@ -232,7 +232,7 @@ const SingleCollegeCourse = () => {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold flex-shrink-0">
+                  <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold shrink-0">
                     3
                   </div>
                   <div>
@@ -246,7 +246,7 @@ const SingleCollegeCourse = () => {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold flex-shrink-0">
+                  <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold shrink-0">
                     4
                   </div>
                   <div>
@@ -260,7 +260,7 @@ const SingleCollegeCourse = () => {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold flex-shrink-0">
+                  <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold shrink-0">
                     5
                   </div>
                   <div>
@@ -348,7 +348,7 @@ const SingleCollegeCourse = () => {
             </div>
 
             {/* College Information */}
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-6 shadow-sm">
+            <div className="bg-linear-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-6 shadow-sm">
               <h3 className="text-lg font-bold text-gray-900 mb-3">
                 About the College
               </h3>
@@ -384,7 +384,7 @@ const SingleCollegeCourse = () => {
             {/* Contact Info */}
             <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6">
               <div className="flex items-start gap-3">
-                <Clock className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                <Clock className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
                 <div>
                   <h4 className="font-semibold text-amber-900 mb-1">
                     Need Help?

@@ -157,7 +157,7 @@ const EventApplicationModal = ({ isOpen, onClose, event, onSubmit, loading }) =>
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
         {/* Header */}
-        <div className="bg-gradient-to-r from-emerald-600 to-green-600 px-6 py-4 flex items-center justify-between">
+        <div className="bg-linear-to-r from-emerald-600 to-green-600 px-6 py-4 flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-bold text-white">Apply for Event</h2>
             <p className="text-emerald-50 text-sm mt-1">{event.title}</p>
@@ -520,7 +520,7 @@ const EventApplicationModal = ({ isOpen, onClose, event, onSubmit, loading }) =>
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-green-600 text-white font-semibold hover:from-emerald-700 hover:to-green-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="px-6 py-3 rounded-xl bg-linear-to-r from-emerald-600 to-green-600 text-white font-semibold hover:from-emerald-700 hover:to-green-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               {loading ? (
                 <>
