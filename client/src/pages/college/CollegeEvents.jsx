@@ -170,6 +170,7 @@ const CollegeEvents = () => {
 
     try {
       if (editingEvent) {
+        console.log("first")
         await updateEvent(editingEvent._id, eventPayload);
       } else {
         await createEvent(eventPayload);

@@ -47,11 +47,13 @@ import SingleCollegeScholarship from "./pages/student/SingleCollegeScholarship";
 import SingleCollegeCourse from "./pages/student/SingleCollegeCourse";
 import StudentProfile from "./pages/student/StudentProfile";
 import EventsList from "./pages/college/EventsList";
+import SearchResults from "./components/SearchResults";
 
 const App = () => {
   const location = useLocation();
 
-  const hideFooter = location.pathname.startsWith("/admin");
+  const hideScholarship = location.pathname.startsWith("/admin");
+  const hideFooter = location.pathname.startsWith("/scholarships");
 
   // const hideFooterRoutes = ["/admin/login", "/admin/*"];
   // const hideFooter = hideFooterRoutes.includes(location.pathname);
@@ -93,6 +95,7 @@ const App = () => {
           <Route path="/events" element={<Events />} />
           <Route path="/scholarships" element={<Scholarships />} />
           <Route path="/profile" element={<StudentProfile />} />
+<Route path="/search" element={<SearchResults />} />
         </Route>
 
         {/* STUDENT DASHBOARD */}
@@ -140,7 +143,7 @@ const App = () => {
       </Routes>
 
       <ChatBot />
-      {!hideFooter && <Footer />}
+      {!hideFooter && !hideScholarship && <Footer />}
     </>
   );
 };

@@ -108,7 +108,7 @@ export const EventProvider = ({ children }) => {
       const res = await api.put(`/events/${eventId}`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-
+console.log(res)
       if (res.data?.success) {
         toast.success(res.data.message || "Event updated successfully");
         await fetchEvents();
@@ -148,8 +148,9 @@ export const EventProvider = ({ children }) => {
     setLoading(true);
     try {
       const res = await api.get(`/events/all`);
+      console.log(res)
       setAllEvents(res.data.data.events);
-      return res.data?.data;
+      // return res.data?.data;
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to fetch events");
       console.log(error);
@@ -274,9 +275,15 @@ export const EventProvider = ({ children }) => {
     }
   };
 
-  useEffect(() => {
-    fetchEvents();
-  }, []);
+ useEffect(() => {
+  const token = localStorage.getItem("token"); // adjust key if different
+  if (!token) {
+    setLoading(false);
+    return;
+  }
+  fetchEvents();
+}, []);
+
 
   const value = useMemo(
     () => ({

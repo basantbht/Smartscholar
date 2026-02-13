@@ -17,6 +17,7 @@ import studentRoutes from "./routes/studentRoutes.js";
 import eventRoutes from "./routes/eventRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import courseRoutes from "./routes/courseRoutes.js";
+import chatRoutes from "./routes/chatRoutes.js";
 
 config();
 
@@ -51,6 +52,7 @@ app.use("/api/v1/student", studentRoutes);
 app.use("/api/v1/events", eventRoutes);
 app.use("/api/v1/notifications", notificationRoutes);
 app.use("/api/v1/courses", courseRoutes);
+app.use("/api/v1/chats", chatRoutes);
 
 app.use(errorMiddleware);
 
