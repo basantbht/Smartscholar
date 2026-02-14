@@ -20,7 +20,6 @@ const items = [
   { label: "Scholarships", icon: Megaphone, to: "/college/scholarships" },
   { label: "Events", icon: Megaphone, to: "/college/events" },  
   { label: "Applications", icon: ClipboardList, to: "/college/eventlist" },
-  { label: "Sessions", icon: MessageCircle, to: "/college/sessions" },
 
 ];
 
@@ -93,8 +92,7 @@ const CollegeSidebar = ({ open, onClose }) => {
                 (it.to.startsWith("/college/applications") ||
                   it.to.startsWith("/college/courses") ||
                   it.to.startsWith("/college/scholarships") ||
-                  it.to.startsWith("/college/events") ||  
-                  it.to.startsWith("/college/sessions"));
+                  it.to.startsWith("/college/events"));
 
               return (
                 <NavLink
@@ -134,8 +132,6 @@ const CollegeSidebar = ({ open, onClose }) => {
                 }`
               }
             >
-              <Settings className="w-5 h-5" />
-              <span className="font-medium">Settings</span>
             </NavLink>
           </div>
         </nav>

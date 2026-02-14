@@ -211,6 +211,7 @@ export const CollegeProvider = ({ children }) => {
     setLoading(true);
     try {
       const res = await api.get("/courses/all");
+      console.log(res)
       setAllCourses(res.data?.data?.courses || []);
       return res.data?.data;
     } catch (error) {

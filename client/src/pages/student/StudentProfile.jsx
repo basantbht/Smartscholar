@@ -653,14 +653,6 @@ const StudentProfile = () => {
         return <DashboardContent />;
       case "applications":
         return <ApplicationsContent />;
-      case "profile":
-        return <ProfileContent />;
-      case "bookmarks":
-        return <BookmarksContent />;
-      case "notifications":
-        return <NotificationsContent />;
-      case "change-password":
-        return <ChangePasswordContent />;
       default:
         return <DashboardContent />;
     }
@@ -699,9 +691,7 @@ const StudentProfile = () => {
             {[
               { id: "dashboard", icon: Home, label: "Dashboard" },
               { id: "applications", icon: FileText, label: "My Applications" },
-              { id: "profile", icon: User, label: "My Profile" },
-              { id: "bookmarks", icon: Heart, label: "Bookmarks" },
-              { id: "notifications", icon: Bell, label: "Notifications" },
+            
             ].map((item) => (
               <button
                 key={item.id}

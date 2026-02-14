@@ -6,7 +6,7 @@ import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { Pinecone } from "@pinecone-database/pinecone";
 import ollama from "ollama";
 
-const PDF_PATH = "./pu_data.pdf";
+const PDF_PATH = "./Tribhuvan_University.pdf";
 const EMBED_MODEL = "qwen3-embedding:0.6b";
 const INDEX_NAME = process.env.PINECONE_INDEX_NAME;
 const BATCH_SIZE = 50;

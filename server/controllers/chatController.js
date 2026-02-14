@@ -78,6 +78,7 @@ export const scholarshipChat = async (req, res) => {
 
     // 4) Build system + prompt
     const system = `
+    If user said hi,hello,hey,and such greetings give response of it nicely.
 You are a SmartScholar scholarship expert assistant.
 You help students find and understand scholarship opportunities at Pokhara University.
 You will be given CONTEXT from official university documents and a QUESTION.
@@ -85,6 +86,7 @@ Answer ONLY using the CONTEXT provided.
 If the answer is not in the context, say exactly: "I could not find the answer in the provided document."
 Keep your answers clear, accurate, and helpful for students.
 Format your responses clearly with relevant details like eligibility, deadlines, amounts, and application steps when applicable.
+
 `.trim();
 
     const prompt = `
@@ -163,7 +165,8 @@ export const scholarshipHealth = async (req, res) => {
   }
 };
 
-// ─── DELETE /api/v1/scholarship/session/:sessionId ───────────────────────────
+// ─── DELETE /api/v1/scholarship/session/:sessionId ──
+// ─────────────────────────
 export const clearSession = (req, res) => {
   const { sessionId } = req.params;
   SessionHistory.delete(sessionId);

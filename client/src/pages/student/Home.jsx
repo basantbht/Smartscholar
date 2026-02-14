@@ -15,10 +15,14 @@ import {
   Star,
 } from "lucide-react";
 import { useUser } from "../../context/UserContext";
+import { useEvents } from "../../context/EventContext";
+import { useCollege } from "../../context/CollegeContext";
 
 const Home = () => {
   const navigate = useNavigate();
   const { fetchColleges, colleges, loading } = useUser();
+  const { getAllCollegesEvents,allEvents } = useEvents();
+  const { getAllCollegesCourses, allCourses } = useCollege();
   const [featuredColleges, setFeaturedColleges] = useState([]);
 
   useEffect(() => {
@@ -35,11 +39,18 @@ const Home = () => {
     }
   }, [colleges]);
 
+  useEffect(() => {
+    getAllCollegesEvents();
+  },[])
+  
+  useEffect(() => {
+    getAllCollegesCourses();
+  },[])
+
   const stats = [
-    { icon: Building2, value: "500+", label: "Colleges", color: "blue" },
-    { icon: BookOpen, value: "10,000+", label: "Courses", color: "purple" },
-    { icon: Users, value: "50,000+", label: "Students", color: "green" },
-    { icon: Award, value: "1,000+", label: "Scholarships", color: "orange" },
+    { icon: Building2, value: colleges.length+"+", label: "Colleges", color: "blue" },
+    { icon: BookOpen, value: allCourses.length+"+", label: "Courses", color: "purple" },
+    { icon: Users, value: allEvents.length+"+", label: "Events", color: "green" },
   ];
 
   const features = [
@@ -108,10 +119,10 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Stats Section */} 
+      {/* Stats Section - Centered */} 
       <section className="relative py-20 px-4 bg-linear-to-b from-white to-slate-50">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+          <div className="flex flex-wrap justify-center gap-6">
             {stats.map((stat, index) => {
               const Icon = stat.icon;
               const colors = {
@@ -124,13 +135,13 @@ const Home = () => {
               return (
                 <div
                   key={index}
-                  className="group bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:-translate-y-2"
+                  className="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:-translate-y-2 w-full sm:w-72"
                 >
                   <div className={`inline-flex p-3 rounded-xl bg-linear-to-br ${colors[stat.color]} mb-4 group-hover:scale-110 transition-transform duration-300`}>
                     <Icon className="w-6 h-6 text-white" />
                   </div>
-                  <h3 className="text-2xl md:text-3xl font-bold text-slate-900 mb-1">{stat.value}</h3>
-                  <p className="text-xs md:text-sm text-slate-600 font-medium">{stat.label}</p>
+                  <h3 className="text-3xl md:text-4xl font-bold text-slate-900 mb-1">{stat.value}</h3>
+                  <p className="text-sm md:text-base text-slate-600 font-medium">{stat.label}</p>
                 </div>
               );
             })}
@@ -171,36 +182,6 @@ const Home = () => {
                 </div>
               );
             })}
-          </div>
-        </div>
-      </section>
-
-      {/* Categories Section */}
-      <section className="py-20 px-4 bg-linear-to-b from-slate-50 to-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-4" style={{ fontFamily: 'Georgia, serif' }}>
-              Explore by Field
-            </h2>
-            <p className="text-lg md:text-xl text-slate-600">
-              Find programs in your area of interest
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {categories.map((category, index) => (
-              <button
-                key={index}
-                onClick={() => navigate('/courses')}
-                className="group relative bg-linear-to-br from-slate-50 to-white rounded-2xl p-6 border-2 border-slate-200 hover:border-blue-500 transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
-              >
-                <div className="text-4xl md:text-5xl mb-3 group-hover:scale-110 transition-transform duration-300">
-                  {category.icon}
-                </div>
-                <h3 className="font-bold text-slate-900 mb-1 text-sm md:text-base">{category.name}</h3>
-                <p className="text-xs md:text-sm text-slate-600">{category.count} programs</p>
-              </button>
-            ))}
           </div>
         </div>
       </section>
