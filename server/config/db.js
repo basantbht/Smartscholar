@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import reminderService from "../services/reminderService.js"
 
 export const connectDb = async () => {
   const mongoUri = process.env.MONGO_URI;
@@ -6,4 +7,6 @@ export const connectDb = async () => {
 
   await mongoose.connect(mongoUri);
   console.log("MongoDB connected");
+
+  reminderService.startScheduler();
 };

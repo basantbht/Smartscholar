@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import Navbar from "../components/Navbar"; // your navbar component
+import Navbar from "../components/Navbar";
 
 const StudentLayout = () => {
   return (
@@ -13,19 +13,3 @@ const StudentLayout = () => {
 };
 
 export default StudentLayout;
-
-// import { Outlet } from "react-router-dom";
-// import Navbar from "../components/Navbar"; // your navbar component
-
-// const StudentLayout = () => {
-//   return (
-//     <div className="h-screen flex flex-col overflow-hidden">
-//       <Navbar />
-//       <main className="flex-1 overflow-hidden">
-//         <Outlet />
-//       </main>
-//     </div>
-//   );
-// };
-
-// export default StudentLayout;

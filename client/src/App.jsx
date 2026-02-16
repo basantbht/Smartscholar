@@ -50,6 +50,7 @@ import EventsList from "./pages/college/EventsList";
 import SearchResults from "./components/SearchResults";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import ResetPassword from "./pages/auth/ResetPassword";
+import SubscribePage from "./pages/student/Subscribe";
 
 const App = () => {
   const location = useLocation();
@@ -100,6 +101,7 @@ const App = () => {
           <Route path="/search" element={<SearchResults />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/subscribe" element={<SubscribePage />} />
         </Route>
 
         {/* STUDENT DASHBOARD */}

@@ -19,6 +19,14 @@ import notificationRoutes from "./routes/notificationRoutes.js";
 import courseRoutes from "./routes/courseRoutes.js";
 import chatRoutes from "./routes/chatRoutes.js";
 
+// Import scholarship routes
+import scholarshipRoutes from "./routes/scholarshipRoutes.js";
+import calendarRoutes from "./routes/calendarRoutes.js";
+import reminderRoutes from "./routes/reminderRoutes.js";
+import subscriptionRoutes from "./routes/subscriptionRoutes.js";
+import scholarshipStatsRoutes from "./routes/scholarshipStatsRoutes.js";
+import scholarshipSearchRoutes from "./routes/scholarshipSearchRoutes.js";
+
 config();
 
 const __filename = fileURLToPath(import.meta.url);
@@ -53,6 +61,14 @@ app.use("/api/v1/events", eventRoutes);
 app.use("/api/v1/notifications", notificationRoutes);
 app.use("/api/v1/courses", courseRoutes);
 app.use("/api/v1/chats", chatRoutes);
+
+// Scholarship routes
+app.use("/api/v1/scholarships", scholarshipRoutes);
+app.use("/api/v1/calendar", calendarRoutes);
+app.use("/api/v1/reminders", reminderRoutes);
+app.use("/api/v1/subscriptions", subscriptionRoutes);
+app.use("/api/v1/scholarship-stats", scholarshipStatsRoutes);
+app.use("/api/v1/scholarship-search", scholarshipSearchRoutes);
 
 app.use(errorMiddleware);
 

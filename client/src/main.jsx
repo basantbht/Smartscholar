@@ -10,6 +10,7 @@ import { EventProvider } from "./context/EventContext";
 import { UserProvider } from "./context/UserContext";
 import { ScholarshipProvider } from "./context/ScholarshipContext";
 import { CourseProvider } from "./context/CourseContext";
+import { SubscribeProvider } from "./context/SubscribeContext";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
 
@@ -21,7 +22,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             <EventProvider>
               <ScholarshipProvider>
                 <CourseProvider>
+                  <SubscribeProvider>
                   <App />
+                  </SubscribeProvider>
                 </CourseProvider>
               </ScholarshipProvider>
             </EventProvider>

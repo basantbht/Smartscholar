@@ -1,7 +1,7 @@
 import { asyncHandler } from "../middlewares/asyncHandler.js";
 import ErrorHandler from "../middlewares/error.js";
 import { User } from "../models/user.js";
-import { Scholarship } from "../models/scholarship.js";
+import { Scholarshipdetail } from "../models/scholarshipdetail.js";
 import { notifyUser } from "../services/notificationServices.js";
 
 // Helper middleware to ensure college is approved
@@ -49,7 +49,7 @@ export const createScholarship = asyncHandler(async (req, res, next) => {
   }
 
   // Create scholarship
-  const scholarship = await Scholarship.create({
+  const scholarship = await Scholarshipdetail.create({
     college: req.user._id,
     collegeName: college.collegeProfile.collegeName || college.name,
     title,
@@ -78,7 +78,7 @@ export const createScholarship = asyncHandler(async (req, res, next) => {
 
 // Get all scholarships for the logged-in college
 export const getMyScholarships = asyncHandler(async (req, res, next) => {
-  const scholarships = await Scholarship.find({ college: req.user._id })
+  const scholarships = await Scholarshipdetail.find({ college: req.user._id })
     .sort({ createdAt: -1 })
     .lean();
 
@@ -95,7 +95,7 @@ export const getMyScholarships = asyncHandler(async (req, res, next) => {
 export const getScholarshipById = asyncHandler(async (req, res, next) => {
   const { scholarshipId } = req.params;
 
-  const scholarship = await Scholarship.findById(scholarshipId).populate(
+  const scholarship = await Scholarshipdetail.findById(scholarshipId).populate(
     "college",
     "name email collegeProfile.collegeName"
   );
@@ -134,7 +134,7 @@ export const updateScholarship = asyncHandler(async (req, res, next) => {
     status,
   } = req.body;
 
-  const scholarship = await Scholarship.findById(scholarshipId);
+  const scholarship = await Scholarshipdetail.findById(scholarshipId);
 
   if (!scholarship) {
     return next(new ErrorHandler("Scholarship not found", 404));
@@ -185,7 +185,7 @@ export const deleteScholarship = asyncHandler(async (req, res, next) => {
 
   const { scholarshipId } = req.params;
 
-  const scholarship = await Scholarship.findById(scholarshipId);
+  const scholarship = await Scholarshipdetail.findById(scholarshipId);
 
   if (!scholarship) {
     return next(new ErrorHandler("Scholarship not found", 404));
@@ -206,7 +206,7 @@ export const deleteScholarship = asyncHandler(async (req, res, next) => {
   }
 
   // Delete the scholarship
-  await Scholarship.findByIdAndDelete(scholarshipId);
+  await Scholarshipdetail.findByIdAndDelete(scholarshipId);
 
   res.status(200).json({
     success: true,
@@ -223,7 +223,7 @@ export const getScholarshipsByCollegeId = asyncHandler(async (req, res, next) =>
     return next(new ErrorHandler("College not found", 404));
   }
 
-  const scholarships = await Scholarship.find({
+  const scholarships = await Scholarshipdetail.find({
     college: collegeId,
     status: "active", // Only show active scholarships to public
   })
@@ -265,7 +265,7 @@ export const getAllActiveScholarships = asyncHandler(async (req, res, next) => {
     ];
   }
 
-  const scholarships = await Scholarship.find(filter)
+  const scholarships = await Scholarshipdetail.find(filter)
     .populate("college", "name collegeProfile.collegeName collegeProfile.image")
     .sort({ createdAt: -1 })
     .lean();
@@ -283,7 +283,7 @@ export const getAllActiveScholarships = asyncHandler(async (req, res, next) => {
 export const getScholarshipStats = asyncHandler(async (req, res, next) => {
   ensureApprovedCollege(req, next);
 
-  const scholarships = await Scholarship.find({ college: req.user._id }).lean();
+  const scholarships = await Scholarshipdetail.find({ college: req.user._id }).lean();
 
   const stats = {
     total: scholarships.length,
@@ -309,7 +309,7 @@ export const toggleScholarshipStatus = asyncHandler(async (req, res, next) => {
 
   const { scholarshipId } = req.params;
 
-  const scholarship = await Scholarship.findById(scholarshipId);
+  const scholarship = await Scholarshipdetail.findById(scholarshipId);
 
   if (!scholarship) {
     return next(new ErrorHandler("Scholarship not found", 404));

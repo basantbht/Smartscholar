@@ -23,7 +23,7 @@ import {
   getAllActiveScholarships,
   getScholarshipStats,
   toggleScholarshipStatus,
-} from "../controllers/scholarshipController.js";
+} from "../controllers/scholarshipdetailController.js";
 
 const router = express.Router();
 

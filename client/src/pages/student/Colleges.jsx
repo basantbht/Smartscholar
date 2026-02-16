@@ -364,7 +364,7 @@ const Colleges = () => {
                             <button
                               key={pageNum}
                               onClick={() => handlePageChange(pageNum)}
-                              className={`min-w-[44px] px-4 py-2.5 text-sm font-semibold rounded-xl transition-all ${
+                              className={`min-w-11 px-4 py-2.5 text-sm font-semibold rounded-xl transition-all ${
                                 pageNum === pagination.page
                                   ? 'bg-linear-to-r from-blue-600 to-indigo-600 text-white shadow-lg scale-110'
                                   : 'text-gray-700 bg-white border-2 border-gray-300 hover:bg-gray-50 hover:border-gray-400'

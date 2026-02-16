@@ -13,6 +13,7 @@ import {
   Calendar,
   MapPin,
   Star,
+  Bell,
 } from "lucide-react";
 import { useUser } from "../../context/UserContext";
 import { useEvents } from "../../context/EventContext";
@@ -21,7 +22,7 @@ import { useCollege } from "../../context/CollegeContext";
 const Home = () => {
   const navigate = useNavigate();
   const { fetchColleges, colleges, loading } = useUser();
-  const { getAllCollegesEvents,allEvents } = useEvents();
+  const { getAllCollegesEvents, allEvents } = useEvents();
   const { getAllCollegesCourses, allCourses } = useCollege();
   const [featuredColleges, setFeaturedColleges] = useState([]);
 
@@ -41,16 +42,16 @@ const Home = () => {
 
   useEffect(() => {
     getAllCollegesEvents();
-  },[])
+  }, []);
   
   useEffect(() => {
     getAllCollegesCourses();
-  },[])
+  }, []);
 
   const stats = [
-    { icon: Building2, value: colleges.length+"+", label: "Colleges", color: "blue" },
-    { icon: BookOpen, value: allCourses.length+"+", label: "Courses", color: "purple" },
-    { icon: Users, value: allEvents.length+"+", label: "Events", color: "green" },
+    { icon: Building2, value: colleges.length + "+", label: "Colleges", color: "blue" },
+    { icon: BookOpen, value: allCourses.length + "+", label: "Courses", color: "purple" },
+    { icon: Users, value: allEvents.length + "+", label: "Events", color: "green" },
   ];
 
   const features = [
@@ -275,7 +276,7 @@ const Home = () => {
         </section>
       )}
 
-      {/* CTA Section */}
+      {/* CTA Section - Subscribe to Scholarship Updates */}
       <section className="relative py-24 overflow-hidden">
         {/* Background */}
         <div className="absolute inset-0 bg-linear-to-br from-blue-600 via-indigo-600 to-purple-700"></div>
@@ -283,19 +284,25 @@ const Home = () => {
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-white/5 rounded-full blur-3xl"></div>
 
         <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
+          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full mb-6 border border-white/20">
+            <Bell className="w-4 h-4 text-yellow-300" />
+            <span className="text-sm font-semibold text-white">Never Miss a Scholarship</span>
+          </div>
+          
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6" style={{ fontFamily: 'Georgia, serif' }}>
-            Ready to Start Your Journey?
+            Stay Updated on Scholarship Openings
           </h2>
           <p className="text-lg md:text-xl text-blue-100 mb-10 max-w-2xl mx-auto">
-            Join thousands of students who have found their perfect educational path through our platform
+            Subscribe to get notified when new scholarship opportunities open. Get reminders 7 days before applications start.
           </p>
           
           <div className="flex flex-wrap items-center justify-center gap-4">
             <button
-              onClick={() => navigate('/colleges')}
+              onClick={() => navigate('/subscribe')}
               className="group px-8 py-4 rounded-xl bg-white text-blue-600 font-bold hover:bg-blue-50 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-2 hover:-translate-y-1"
             >
-              Get Started Now
+              <Bell className="w-5 h-5" />
+              Subscribe to Updates
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </button>
             <button
@@ -304,6 +311,22 @@ const Home = () => {
             >
               Browse Scholarships
             </button>
+          </div>
+
+          {/* Trust Indicators */}
+          <div className="mt-12 flex flex-wrap items-center justify-center gap-8 text-white/70 text-sm">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+              <span>Free Forever</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+              <span>Unsubscribe Anytime</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+              <span>All Nepal Universities</span>
+            </div>
           </div>
         </div>
       </section>
