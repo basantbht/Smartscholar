@@ -22,9 +22,9 @@ export function generateScholarshipReminderTemplate(scholarships) {
           <div style="color:#667eea;font-weight:bold;font-size:14px">${s.university}</div>
           <h3 style="margin:8px 0;font-size:18px;color:#222">${s.scholarshipName}</h3>
           <span style="background:#51cf66;color:#fff;padding:4px 12px;border-radius:15px;display:inline-block;font-weight:bold;margin:8px 0">
-            🚀 Opens: ${openDate}
+            Opens: ${openDate}
           </span>
-          ${closeDate ? `<span style="background:#ff6b6b;color:#fff;padding:4px 12px;border-radius:15px;display:inline-block;margin:8px 5px">📅 Deadline: ${closeDate}</span>` : ''}
+          ${closeDate ? `<span style="background:#ff6b6b;color:#fff;padding:4px 12px;border-radius:15px;display:inline-block;margin:8px 5px">Deadline: ${closeDate}</span>` : ''}
           ${s.description ? `<p style="color:#555;margin-top:10px;font-size:14px">${s.description.slice(0, 200)}...</p>` : ''}
           ${s.sourceUrl ? `<a href="${s.sourceUrl}" style="color:#667eea;font-size:14px">View Details →</a>` : ''}
         </div>`;
@@ -36,7 +36,7 @@ export function generateScholarshipReminderTemplate(scholarships) {
 <head><meta charset="utf-8"/></head>
 <body style="font-family:Arial,sans-serif;line-height:1.6;color:#333;max-width:600px;margin:0 auto">
   <div style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;padding:30px;text-align:center;border-radius:8px 8px 0 0">
-    <h1 style="margin:0">📅 Scholarships Opening Soon!</h1>
+    <h1 style="margin:0">Scholarships Opening Soon!</h1>
     <p style="margin:8px 0 0">Don't miss these upcoming opportunities</p>
   </div>
   <div style="padding:20px;background:#f9f9f9">
@@ -61,7 +61,7 @@ export function generateScholarshipReminderTemplate(scholarships) {
 export function generateScholarshipSubscriptionTemplate(email) {
   return `
     <div style="font-family: Arial; padding:20px; background:#fff; border:1px solid #ddd; border-radius:8px;">
-      <h2 style="color:#667eea;">✅ Scholarship Alerts Activated</h2>
+      <h2 style="color:#667eea;">Scholarship Alerts Activated</h2>
       <p>Thank you for subscribing to Nepal Scholarship Alerts!</p>
       <p>You will now receive notifications about:</p>
       <ul style="color:#555;">
@@ -89,7 +89,7 @@ export function generateScholarshipDeadlineReminderTemplate(scholarship) {
 
   return `
     <div style="font-family: Arial; padding:20px; background:#fff; border:1px solid #ddd; border-radius:8px;">
-      <h2 style="color:#ff6b6b;">⏰ Application Deadline Approaching</h2>
+      <h2 style="color:#ff6b6b;">Application Deadline Approaching</h2>
       <div style="background:#f9f9f9;padding:15px;border-radius:5px;margin:20px 0;">
         <h3 style="color:#667eea;margin:0 0 10px 0;">${scholarship.scholarshipName}</h3>
         <p style="margin:5px 0;"><strong>University:</strong> ${scholarship.university}</p>
@@ -115,7 +115,7 @@ export function generateNewScholarshipTemplate(scholarship) {
 
   return `
     <div style="font-family: Arial; padding:20px; background:#fff; border:1px solid #ddd; border-radius:8px;">
-      <h2 style="color:#10b981;">🎓 New Scholarship Opportunity</h2>
+      <h2 style="color:#10b981;">New Scholarship Opportunity</h2>
       <div style="background:#f0fdf4;padding:15px;border-radius:5px;margin:20px 0;border-left:4px solid #10b981;">
         <h3 style="color:#222;margin:0 0 10px 0;">${scholarship.title}</h3>
         <p style="margin:5px 0;"><strong>University:</strong> ${scholarship.university}</p>
